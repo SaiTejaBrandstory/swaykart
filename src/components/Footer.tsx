@@ -165,7 +165,7 @@ const Footer = () => {
             <p style={{
               fontFamily: 'Inter',
               fontWeight: 400,
-              fontSize: 'clamp(12px, 2vw, 14px)',
+              fontSize: 'clamp(14px, 2vw, 16px)',
               lineHeight: 'clamp(16px, 3vw, 20px)',
               letterSpacing: '0%',
               color: '#FFFFFF',
@@ -182,7 +182,7 @@ const Footer = () => {
                   style={{
                     fontFamily: 'Inter',
                     fontWeight: 400,
-                    fontSize: 'clamp(12px, 2vw, 14px)',
+                    fontSize: 'clamp(14px, 2vw, 16px)',
                     lineHeight: 'clamp(16px, 3vw, 20px)',
                     letterSpacing: '0%',
                     color: '#FFFFFF'

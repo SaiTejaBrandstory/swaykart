@@ -133,7 +133,7 @@ const FeaturesSection = () => {
                 <div className="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-medium mb-4" style={{
                   fontFamily: 'Inter',
                   fontWeight: 500,
-                  fontSize: 'clamp(12px, 2.5vw, 14px)',
+                  fontSize: 'clamp(14px, 2.5vw, 16px)',
                   lineHeight: '100%',
                   letterSpacing: '0%',
                   color: feature.tagColor || '#FCA311',

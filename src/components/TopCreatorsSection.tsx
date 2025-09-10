@@ -317,7 +317,7 @@ const TopCreatorsSection = () => {
                   style={{
                     fontFamily: 'Inter',
                     fontWeight: 400,
-                      fontSize: 'clamp(12px, 2vw, 14px)',
+                      fontSize: 'clamp(14px, 2vw, 16px)',
                       lineHeight: 'clamp(16px, 3vw, 20px)',
                     letterSpacing: '0%',
                   }}
@@ -343,7 +343,7 @@ const TopCreatorsSection = () => {
                   style={{
                     fontFamily: 'Inter',
                     fontWeight: 400,
-                      fontSize: 'clamp(12px, 2vw, 14px)',
+                      fontSize: 'clamp(14px, 2vw, 16px)',
                       lineHeight: 'clamp(16px, 3vw, 20px)',
                     letterSpacing: '0%',
                   }}
@@ -377,7 +377,7 @@ const TopCreatorsSection = () => {
                   style={{
                     fontFamily: 'Inter',
                     fontWeight: 400,
-                      fontSize: 'clamp(12px, 2vw, 14px)',
+                      fontSize: 'clamp(14px, 2vw, 16px)',
                       lineHeight: 'clamp(16px, 3vw, 20px)',
                     letterSpacing: '0%',
                   }}
@@ -401,7 +401,7 @@ const TopCreatorsSection = () => {
                     style={{
                       fontFamily: 'Inter',
                       fontWeight: 400,
-                      fontSize: 'clamp(12px, 2vw, 14px)',
+                      fontSize: 'clamp(14px, 2vw, 16px)',
                       lineHeight: 'clamp(16px, 3vw, 20px)',
                       letterSpacing: '0%',
                     }}
@@ -594,7 +594,7 @@ const TopCreatorsSection = () => {
                         <div className="text-[#6B7280] truncate" style={{
                           fontFamily: 'Inter',
                           fontWeight: 400,
-                          fontSize: 'clamp(12px, 2vw, 14px)',
+                          fontSize: 'clamp(14px, 2vw, 16px)',
                           lineHeight: 'clamp(16px, 3vw, 20px)',
                           letterSpacing: '0%',
                         }}>
@@ -614,12 +614,12 @@ const TopCreatorsSection = () => {
                   </td>
                   <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-[#14213D]">
                     <div className="flex items-center gap-1">
-                      <span className="px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium" style={{
+                      <span className="px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-sm font-medium" style={{
                         backgroundColor: '#DBEAFE',
                         color: '#14213D',
                         fontFamily: 'Inter',
                         fontWeight: 500,
-                        fontSize: 'clamp(10px, 2vw, 12px)',
+                        fontSize: 'clamp(14px, 2vw, 16px)',
                         lineHeight: '100%',
                         letterSpacing: '0%',
                         border: '1px solid #DBEAFE',
@@ -628,12 +628,12 @@ const TopCreatorsSection = () => {
                       </span>
                       {creator.industries.length > 1 && (
                         <div className="relative group">
-                          <span className="px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium cursor-pointer" style={{
+                          <span className="px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-sm font-medium cursor-pointer" style={{
                             backgroundColor: '#DBEAFE',
                             color: '#14213D',
                             fontFamily: 'Inter',
                             fontWeight: 500,
-                            fontSize: 'clamp(10px, 2vw, 12px)',
+                            fontSize: 'clamp(14px, 2vw, 16px)',
                             lineHeight: '100%',
                             letterSpacing: '0%',
                             border: '1px solid #DBEAFE',
@@ -647,12 +647,12 @@ const TopCreatorsSection = () => {
                            }}>
                              <div className="flex flex-wrap gap-1 sm:gap-2 max-w-xs">
                                {creator.industries.slice(1).map((industry, idx) => (
-                                 <span key={idx} className="px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium text-center whitespace-nowrap" style={{
+                                 <span key={idx} className="px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-sm font-medium text-center whitespace-nowrap" style={{
                                    backgroundColor: '#DBEAFE',
                                    color: '#14213D',
                                    fontFamily: 'Inter',
                                    fontWeight: 500,
-                                   fontSize: 'clamp(10px, 2vw, 12px)',
+                                   fontSize: 'clamp(14px, 2vw, 16px)',
                                    lineHeight: '100%',
                                    letterSpacing: '0%',
                                  }}>
@@ -688,9 +688,9 @@ const TopCreatorsSection = () => {
                         {creator.engagement}
                       </span>
                       {creator.engagementTrend === 'up' ? (
-                        <i className="fa-solid fa-caret-up ml-1 sm:ml-2" style={{ color: '#16A34A', fontSize: 'clamp(12px, 2.5vw, 16px)' }}></i>
+                        <i className="fa-solid fa-caret-up ml-1 sm:ml-2" style={{ color: '#16A34A', fontSize: 'clamp(14px, 2.5vw, 18px)' }}></i>
                       ) : (
-                        <i className="fa-solid fa-caret-down ml-1 sm:ml-2" style={{ color: '#EF4444', fontSize: 'clamp(12px, 2.5vw, 16px)' }}></i>
+                        <i className="fa-solid fa-caret-down ml-1 sm:ml-2" style={{ color: '#EF4444', fontSize: 'clamp(14px, 2.5vw, 18px)' }}></i>
                       )}
                     </div>
                   </td>
@@ -714,7 +714,7 @@ const TopCreatorsSection = () => {
           <p className="text-sm text-[#4B5563] order-2 sm:order-1 text-center sm:text-left" style={{
             fontFamily: 'Inter',
             fontWeight: 400,
-            fontSize: 'clamp(12px, 2vw, 14px)',
+            fontSize: 'clamp(14px, 2vw, 16px)',
             lineHeight: 'clamp(16px, 3vw, 20px)',
             letterSpacing: '0%',
           }}>
@@ -833,13 +833,13 @@ const TopCreatorsSection = () => {
               style={{
                 fontFamily: 'Inter',
                 fontWeight: 400,
-                fontSize: 'clamp(12px, 2vw, 14px)',
+                fontSize: 'clamp(14px, 2vw, 16px)',
                 lineHeight: 'clamp(16px, 3vw, 20px)',
                 letterSpacing: '0%',
               }}
             >
               <span className="sr-only">Previous</span>
-              <i className="fa-solid fa-chevron-left mr-1" style={{ fontSize: 'clamp(10px, 2vw, 12px)' }}></i>
+              <i className="fa-solid fa-chevron-left mr-1" style={{ fontSize: 'clamp(14px, 2vw, 16px)' }}></i>
               <span className="hidden xs:inline">Previous</span>
             </a>
             <a
@@ -908,14 +908,14 @@ const TopCreatorsSection = () => {
               style={{
                 fontFamily: 'Inter',
                 fontWeight: 400,
-                fontSize: 'clamp(12px, 2vw, 14px)',
+                fontSize: 'clamp(14px, 2vw, 16px)',
                 lineHeight: 'clamp(16px, 3vw, 20px)',
                 letterSpacing: '0%',
               }}
             >
               <span className="sr-only">Next</span>
               <span className="hidden xs:inline">Next</span>
-              <i className="fa-solid fa-chevron-right ml-1" style={{ fontSize: 'clamp(10px, 2vw, 12px)' }}></i>
+              <i className="fa-solid fa-chevron-right ml-1" style={{ fontSize: 'clamp(14px, 2vw, 16px)' }}></i>
             </a>
           </nav>
         </div>

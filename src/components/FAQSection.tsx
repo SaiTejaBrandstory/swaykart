@@ -120,11 +120,11 @@ const FAQSection = () => {
               </button>
               
               {expandedItem === item.id && (
-                <div className="px-6 pb-4">
+                <div className="px-6 py-4">
                   <p style={{
                     fontFamily: 'Inter',
                     fontWeight: 400,
-                    fontSize: 'clamp(12px, 2vw, 16px)',
+                    fontSize: 'clamp(14px, 2vw, 18px)',
                     lineHeight: 'clamp(18px, 3vw, 24px)',
                     letterSpacing: '0%',
                     color: '#00000099'
@@ -145,7 +145,7 @@ const FAQSection = () => {
             style={{
               fontFamily: 'Inter',
               fontWeight: 400,
-              fontSize: 'clamp(12px, 2vw, 16px)',
+              fontSize: 'clamp(14px, 2vw, 18px)',
               lineHeight: 'clamp(18px, 3vw, 24px)',
               letterSpacing: '0%',
               color: '#14213D',

@@ -72,7 +72,7 @@ const GetStartedSection = () => {
                <p style={{
                  fontFamily: 'Inter',
                  fontWeight: 400,
-                 fontSize: 'clamp(12px, 2vw, 14px)',
+                 fontSize: 'clamp(14px, 2vw, 16px)',
                  lineHeight: 'clamp(16px, 3vw, 20px)',
                  letterSpacing: '0%',
                  textAlign: 'center',
@@ -113,7 +113,7 @@ const GetStartedSection = () => {
                                      <label htmlFor="fullName" className="block mb-2" style={{
                      fontFamily: 'Inter',
                      fontWeight: 500,
-                     fontSize: 'clamp(12px, 2.5vw, 16px)',
+                     fontSize: 'clamp(14px, 2.5vw, 18px)',
                      lineHeight: 'clamp(18px, 3.5vw, 24px)',
                      letterSpacing: '0%',
                      color: '#374151'
@@ -142,7 +142,7 @@ const GetStartedSection = () => {
                                      <label htmlFor="workEmail" className="block mb-2" style={{
                      fontFamily: 'Inter',
                      fontWeight: 500,
-                     fontSize: 'clamp(12px, 2.5vw, 16px)',
+                     fontSize: 'clamp(14px, 2.5vw, 18px)',
                      lineHeight: 'clamp(18px, 3.5vw, 24px)',
                      letterSpacing: '0%',
                      color: '#374151'
@@ -171,7 +171,7 @@ const GetStartedSection = () => {
                                      <label htmlFor="companySize" className="block mb-2" style={{
                      fontFamily: 'Inter',
                      fontWeight: 500,
-                     fontSize: 'clamp(12px, 2.5vw, 16px)',
+                     fontSize: 'clamp(14px, 2.5vw, 18px)',
                      lineHeight: 'clamp(18px, 3.5vw, 24px)',
                      letterSpacing: '0%',
                      color: '#374151'

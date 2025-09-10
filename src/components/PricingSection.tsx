@@ -104,7 +104,7 @@ const PricingSection = () => {
                 <p className="mb-4" style={{
                   fontFamily: 'Inter',
                   fontWeight: 400,
-                  fontSize: 'clamp(12px, 2vw, 14px)',
+                  fontSize: 'clamp(14px, 2vw, 16px)',
                   lineHeight: 'clamp(14px, 2.5vw, 16px)',
                   letterSpacing: '0%',
                   color: '#6B7280'
@@ -183,7 +183,7 @@ const PricingSection = () => {
                 <p className="mb-4" style={{
                   fontFamily: 'Inter',
                   fontWeight: 400,
-                  fontSize: 'clamp(12px, 2vw, 14px)',
+                  fontSize: 'clamp(14px, 2vw, 16px)',
                   lineHeight: 'clamp(14px, 2.5vw, 16px)',
                   letterSpacing: '0%',
                   color: '#6B7280'
@@ -284,7 +284,7 @@ const PricingSection = () => {
                 <p className="mb-4" style={{
                   fontFamily: 'Inter',
                   fontWeight: 400,
-                  fontSize: 'clamp(12px, 2vw, 14px)',
+                  fontSize: 'clamp(14px, 2vw, 16px)',
                   lineHeight: 'clamp(14px, 2.5vw, 16px)',
                   letterSpacing: '0%',
                   color: '#6B7280'
@@ -384,7 +384,7 @@ const PricingSection = () => {
                 <p className="mb-4" style={{
                   fontFamily: 'Inter',
                   fontWeight: 400,
-                  fontSize: 'clamp(12px, 2vw, 14px)',
+                  fontSize: 'clamp(14px, 2vw, 16px)',
                   lineHeight: 'clamp(14px, 2.5vw, 16px)',
                   letterSpacing: '0%',
                   color: '#6B7280'
@@ -406,7 +406,7 @@ const PricingSection = () => {
                   <p className="mb-6" style={{
                     fontFamily: 'Inter',
                     fontWeight: 400,
-                    fontSize: 'clamp(12px, 2vw, 14px)',
+                    fontSize: 'clamp(14px, 2vw, 16px)',
                     lineHeight: 'clamp(14px, 2.5vw, 16px)',
                     letterSpacing: '0%',
                     color: '#6B7280'
@@ -591,7 +591,7 @@ const PricingSection = () => {
                   <p style={{
                     fontFamily: 'Inter',
                     fontWeight: 400,
-                    fontSize: 'clamp(13px, 2vw, 14px)',
+                    fontSize: 'clamp(14px, 2vw, 16px)',
                     lineHeight: 'clamp(18px, 3vw, 20px)',
                     letterSpacing: '0%',
                     color: '#DC2626'

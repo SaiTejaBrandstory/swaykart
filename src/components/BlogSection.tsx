@@ -66,7 +66,7 @@ const BlogSection = () => {
             style={{
               fontFamily: 'Inter',
               fontWeight: 400,
-              fontSize: 'clamp(12px, 2vw, 16px)',
+              fontSize: 'clamp(14px, 2vw, 18px)',
               lineHeight: 'clamp(18px, 3vw, 24px)',
               letterSpacing: '0%',
               color: '#14213D',
@@ -104,7 +104,7 @@ const BlogSection = () => {
                     style={{
                       fontFamily: 'Inter',
                       fontWeight: 500,
-                      fontSize: '12px',
+                      fontSize: '14px',
                       lineHeight: '100%',
                       letterSpacing: '0%',
                       color: '#FCA311',
@@ -116,7 +116,7 @@ const BlogSection = () => {
                   <span style={{
                     fontFamily: 'Inter',
                     fontWeight: 400,
-                    fontSize: 'clamp(10px, 1.5vw, 12px)',
+                    fontSize: 'clamp(14px, 1.5vw, 16px)',
                     lineHeight: 'clamp(14px, 2vw, 16px)',
                     letterSpacing: '0%',
                     color: '#6B7280'
