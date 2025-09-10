@@ -63,7 +63,7 @@ const FAQSection = () => {
             textTransform: 'uppercase',
             color: '#14213D'
           }}>
-            YOU'RE NOT THE FIRST ONE TO ASK
+            YOU&apos;RE NOT THE FIRST ONE TO ASK
           </h2>
           <p style={{
             fontFamily: 'Inter',

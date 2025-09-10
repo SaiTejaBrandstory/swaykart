@@ -77,7 +77,7 @@ const InfluencersHero = (): JSX.Element => {
               color: '#14213D99',
               marginBottom: '16px'
             }}>
-              Join India's AI-powered creator platform where top brands meet authentic voices. Get discovered, collaborate with trusted brands, and grow your influence, all in one app.
+              Join India&apos;s AI-powered creator platform where top brands meet authentic voices. Get discovered, collaborate with trusted brands, and grow your influence, all in one app.
             </p>
           </div>
 

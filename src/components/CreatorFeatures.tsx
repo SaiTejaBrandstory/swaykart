@@ -433,7 +433,7 @@ const CreatorFeatures = () => {
                 fontFamily: 'Inter',
                 fontSize: 'clamp(14px, 2.5vw, 16px)',
                 lineHeight: 'clamp(20px, 3.5vw, 24px)'
-              }}>Whether nano or mega, there's a place for you in our creator ecosystem.</p>
+              }}>Whether nano or mega, there&apos;s a place for you in our creator ecosystem.</p>
               <ul className="space-y-2">
                 <li className="flex items-center text-sm text-gray-600">
                   <svg className="mr-2" fill="#FCA311" viewBox="0 0 20 20" style={{ 

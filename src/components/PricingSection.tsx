@@ -411,7 +411,7 @@ const PricingSection = () => {
                     letterSpacing: '0%',
                     color: '#6B7280'
                   }}>
-                    Let's talk about your needs.
+                    Let&apos;s talk about your needs.
                   </p>
                 </div>
 
@@ -508,7 +508,7 @@ const PricingSection = () => {
                 letterSpacing: '0%',
                 color: '#14213D'
               }}>
-                During this period, you'll have read-only access to:
+                During this period, you&apos;ll have read-only access to:
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

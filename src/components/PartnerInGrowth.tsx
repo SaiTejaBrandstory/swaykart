@@ -67,7 +67,7 @@ const PartnerInGrowth = () => {
             textAlign: 'center',
             color: '#4B5563'
           }}>
-            We're not just another influencer platform. We're your strategic partner for growth.
+            We&apos;re not just another influencer platform. We&apos;re your strategic partner for growth.
           </p>
         </div>
 
