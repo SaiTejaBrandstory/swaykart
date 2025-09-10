@@ -1,0 +1,5 @@
+<!-- Vercel logo (triangle) — themable via currentColor -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vercel logo">
+  <title>Vercel</title>
+  <path d="M256,48,496,464H16Z" fill="currentColor"/>
+</svg>
