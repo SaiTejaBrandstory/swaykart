@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 
-// Ultra-fast database configuration
+// Vercel-optimized database configuration
 const config = {
   host: 'swaykart-test.cd4ai80suo3k.ap-south-1.rds.amazonaws.com',
   port: 5432,
@@ -8,18 +8,17 @@ const config = {
   user: 'saiteja',
   password: 'Swaykart@123',
   ssl: { rejectUnauthorized: false },
-  // Ultra-optimized for maximum speed
-  max: 15,
-  min: 5,
-  idleTimeoutMillis: 5000,
-  connectionTimeoutMillis: 1000,
-  statement_timeout: 5000,
-  query_timeout: 5000,
-  keepAlive: true,
-  keepAliveInitialDelayMillis: 0,
-  // Additional speed optimizations
-  allowExitOnIdle: false,
-  maxUses: 10000
+  // Vercel serverless-optimized settings
+  max: 1, // Single connection for serverless
+  min: 0,
+  idleTimeoutMillis: 10000,
+  connectionTimeoutMillis: 5000,
+  statement_timeout: 10000,
+  query_timeout: 10000,
+  keepAlive: false, // Disable keepAlive for serverless
+  // Serverless-specific settings
+  allowExitOnIdle: true,
+  maxUses: 1 // Single use per connection
 };
 
 const pool = new Pool(config);

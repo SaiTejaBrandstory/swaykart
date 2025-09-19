@@ -19,7 +19,9 @@ export async function GET() {
 
     // Load data only once
     if (!isLoaded) {
+      console.log('📡 Connecting to database...');
       const client = await pool.connect();
+      console.log('✅ Database connected successfully');
       
       const result = await client.query(`
         SELECT DISTINCT ON (id)
@@ -63,6 +65,16 @@ export async function GET() {
       console.log(`✅ Loaded ${allDataCache.length} records in ${loadTime}ms`);
     }
     
+    // Check if we have data
+    if (allDataCache.length === 0) {
+      console.log('⚠️ No data available, returning empty array');
+      return NextResponse.json({
+        data: [],
+        total: 0,
+        message: 'No data available'
+      });
+    }
+
     const response = NextResponse.json({
       data: allDataCache,
       total: allDataCache.length
@@ -75,10 +87,18 @@ export async function GET() {
   } catch (error) {
     console.error('❌ Database error:', error);
     
+    // More detailed error logging for Vercel
+    if (error instanceof Error) {
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    
     return NextResponse.json(
       { 
         error: 'Failed to fetch influencers',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
+        type: error instanceof Error ? error.name : 'UnknownError'
       },
       { status: 500 }
     );
