@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import Image from 'next/image'
 import DatabaseTable from './DatabaseTable'
 
 const TopCreatorsSection = () => {
@@ -179,9 +180,11 @@ const TopCreatorsSection = () => {
         {/* Header Section */}
         <div className="text-left mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row items-start">
-            <img 
+            <Image 
               src="/images/leaderboard/trophy.svg" 
               alt="Trophy" 
+              width={64}
+              height={64}
               className="w-12 h-12 sm:w-16 sm:h-16 mb-4 sm:mb-0 sm:mr-6 flex-shrink-0"
             />
             <div>
@@ -217,9 +220,11 @@ const TopCreatorsSection = () => {
             border: '1px solid #E5E7EB'
           }}>
             <div className="mb-2 sm:mb-3">
-              <img 
+              <Image 
                 src="/images/leaderboard/active-creators.svg" 
                 alt="Active Creators" 
+                width={48}
+                height={48}
                 className="w-10 h-10 sm:w-12 sm:h-12"
               />
             </div>
@@ -253,9 +258,11 @@ const TopCreatorsSection = () => {
             border: '1px solid #E5E7EB'
           }}>
             <div className="mb-2 sm:mb-3">
-              <img 
+              <Image 
                 src="/images/leaderboard/cities.svg" 
                 alt="Cities" 
+                width={48}
+                height={48}
                 className="w-10 h-10 sm:w-12 sm:h-12"
               />
             </div>
@@ -289,9 +296,11 @@ const TopCreatorsSection = () => {
             border: '1px solid #E5E7EB'
           }}>
             <div className="mb-2 sm:mb-3">
-              <img 
+              <Image 
                 src="/images/leaderboard/industries.svg" 
                 alt="Industries" 
+                width={48}
+                height={48}
                 className="w-10 h-10 sm:w-12 sm:h-12"
               />
             </div>
@@ -604,9 +613,11 @@ const TopCreatorsSection = () => {
                   <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0" style={{ width: 'clamp(32px, 6vw, 40px)', height: 'clamp(32px, 6vw, 40px)' }}>
-                        <img 
+                        <Image 
                           src={creator.image} 
                           alt={creator.name}
+                          width={40}
+                          height={40}
                           className="rounded-full object-cover"
                           style={{ width: 'clamp(32px, 6vw, 40px)', height: 'clamp(32px, 6vw, 40px)' }}
                         />
@@ -641,9 +652,11 @@ const TopCreatorsSection = () => {
                   </td>
                   <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-[#14213D] hidden sm:table-cell">
                     <div className="flex items-center justify-center">
-                      <img 
+                      <Image 
                         src="/images/leaderboard/instagram-logo.svg" 
                         alt="Instagram" 
+                        width={24}
+                        height={24}
                         style={{ width: 'clamp(16px, 3vw, 24px)', height: 'clamp(16px, 3vw, 24px)' }}
                       />
                     </div>

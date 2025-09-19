@@ -1,5 +1,6 @@
 'use client'
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
@@ -80,9 +81,11 @@ const ProcessSection = () => {
 
             <div className="flex items-center space-x-3 sm:space-x-4">
               <div className="flex-shrink-0">
-                <img
+                <Image
                   src={slides[currentSlide].icon}
                   alt={`Process ${currentSlide + 1} Icon`}
+                  width={48}
+                  height={48}
                   style={{
                     width: 'clamp(40px, 8vw, 48px)',
                     height: 'clamp(40px, 8vw, 48px)',
@@ -162,9 +165,11 @@ const ProcessSection = () => {
 
           {/* Right Content - Image */}
           <div>
-            <img
+            <Image
               src={slides[currentSlide].image}
               alt={`Process Step ${currentSlide + 1}`}
+              width={800}
+              height={600}
               className="w-full h-auto"
             />
           </div>

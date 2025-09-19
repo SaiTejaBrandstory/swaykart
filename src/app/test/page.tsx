@@ -355,7 +355,7 @@ export default function TestPage() {
               lineHeight: '26px',
               color: '#374151'
             }}>
-              I'm a beauty and lifestyle content creator passionate about clean beauty, skincare routines, and sustainable fashion. 
+              I&apos;m a beauty and lifestyle content creator passionate about clean beauty, skincare routines, and sustainable fashion. 
               Through honest reviews, practical tips, and mindful fashion choices, I aim to inspire women to embrace natural beauty, 
               care for their skin with confidence, and make conscious style decisions. My content blends authenticity with creativity — 
               helping women not only look good, but also feel empowered in their own skin.
@@ -658,7 +658,7 @@ export default function TestPage() {
                     <div className="w-3 h-3 rounded-full mt-2 flex-shrink-0" style={{ backgroundColor: '#22C55E' }}></div>
                     <div>
                       <p className="text-gray-700">
-                        <span className="font-semibold" style={{ color: '#14213D' }}>Follower Base:</span> This creator's follower base has Increased by +0.3% in the last 30 days.
+                        <span className="font-semibold" style={{ color: '#14213D' }}>Follower Base:</span> This creator&apos;s follower base has Increased by +0.3% in the last 30 days.
                       </p>
                     </div>
                   </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 interface InfluencerData {
   [key: string]: any; // Allow any column from database
@@ -32,7 +32,7 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [columns, setColumns] = useState<string[]>([]);
 
-  const fetchData = async (page: number = 1) => {
+  const fetchData = useCallback(async (page: number = 1) => {
     try {
       setLoading(true);
       
@@ -68,16 +68,16 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery]);
 
   useEffect(() => {
     fetchData(currentPage);
-  }, [currentPage]);
+  }, [currentPage, fetchData]);
 
   useEffect(() => {
     setCurrentPage(1); // Reset to first page when search changes
     fetchData(1);
-  }, [searchQuery]);
+  }, [searchQuery, fetchData]);
 
   if (loading) {
     return (
@@ -126,7 +126,7 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
           <ul className="text-sm text-gray-600 space-y-1">
             <li>1. Check if your database is running and accessible</li>
             <li>2. Verify your .env.local file has correct credentials</li>
-            <li>3. Make sure the table 'scrapped.influencer_ui' exists</li>
+            <li>3. Make sure the table &apos;scrapped.influencer_ui&apos; exists</li>
             <li>4. Check the browser console and terminal for detailed errors</li>
             <li>5. Try visiting: <a href="/api/influencers" target="_blank" className="text-blue-600 underline">/api/influencers</a></li>
           </ul>
