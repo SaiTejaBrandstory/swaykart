@@ -497,7 +497,7 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
                 return (
                   <button
                     key={page}
-                    onClick={() => setCurrentPage(page)}
+                    onClick={() => typeof page === 'number' && setCurrentPage(page)}
                     className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                       currentPage === page
                         ? 'z-10 bg-[#14213D] text-white border-[#14213D]'
