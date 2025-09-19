@@ -8,17 +8,19 @@ const config = {
   user: 'saiteja',
   password: 'Swaykart@123',
   ssl: { rejectUnauthorized: false },
-  // Vercel serverless-optimized settings
-  max: 1, // Single connection for serverless
+  // Minimal connection settings to avoid connection limit
+  max: 1, // Single connection
   min: 0,
-  idleTimeoutMillis: 10000,
-  connectionTimeoutMillis: 5000,
-  statement_timeout: 10000,
-  query_timeout: 10000,
-  keepAlive: false, // Disable keepAlive for serverless
-  // Serverless-specific settings
+  idleTimeoutMillis: 5000, // Shorter idle timeout
+  connectionTimeoutMillis: 10000, // Longer connection timeout
+  statement_timeout: 15000,
+  query_timeout: 15000,
+  keepAlive: false,
+  // Force connection cleanup
   allowExitOnIdle: true,
-  maxUses: 1 // Single use per connection
+  maxUses: 1,
+  // Additional cleanup settings
+  application_name: 'swaykart-vercel'
 };
 
 const pool = new Pool(config);

@@ -20,8 +20,30 @@ export async function GET() {
     // Load data only once
     if (!isLoaded) {
       console.log('📡 Connecting to database...');
-      const client = await pool.connect();
-      console.log('✅ Database connected successfully');
+      
+      // Retry connection with exponential backoff
+      let client;
+      let retries = 3;
+      let delay = 1000;
+      
+      while (retries > 0) {
+        try {
+          client = await pool.connect();
+          console.log('✅ Database connected successfully');
+          break;
+        } catch (error) {
+          retries--;
+          console.log(`❌ Connection failed, retries left: ${retries}`);
+          
+          if (retries === 0) {
+            throw error;
+          }
+          
+          // Wait before retry
+          await new Promise(resolve => setTimeout(resolve, delay));
+          delay *= 2; // Exponential backoff
+        }
+      }
       
       const result = await client.query(`
         SELECT DISTINCT ON (id)
@@ -94,13 +116,24 @@ export async function GET() {
       console.error('Error stack:', error.stack);
     }
     
+    // Return cached data if available, otherwise return empty
+    if (allDataCache.length > 0) {
+      console.log('🔄 Returning cached data due to connection error');
+      return NextResponse.json({
+        data: allDataCache,
+        total: allDataCache.length,
+        warning: 'Using cached data due to connection issues'
+      });
+    }
+    
     return NextResponse.json(
       { 
-        error: 'Failed to fetch influencers',
+        error: 'Database connection failed',
         details: error instanceof Error ? error.message : 'Unknown error',
-        type: error instanceof Error ? error.name : 'UnknownError'
+        type: error instanceof Error ? error.name : 'UnknownError',
+        suggestion: 'Please try again in a few moments'
       },
-      { status: 500 }
+      { status: 503 } // Service Unavailable
     );
   }
 }
