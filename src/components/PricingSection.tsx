@@ -241,7 +241,7 @@ const PricingSection = () => {
                 </h4>
                 
                 <ul className="space-y-3">
-                  {['2 Campaigns', 'View 12 Influencers', 'Hire 4 Influencers', 'Click Tracking', 'AI Recommendations'].map((feature, index) => (
+                  {['2 Campaigns', 'View 12 Influencers', 'Hire 4 Influencers', 'AI Recommendations'].map((feature, index) => (
                     <li key={index} className="flex items-start space-x-3">
                       <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center mt-0.5">
                         <svg className="w-4 h-4" fill="none" stroke="#FCA311" strokeWidth="2" viewBox="0 0 24 24">
@@ -342,7 +342,7 @@ const PricingSection = () => {
                 </h4>
                 
                 <ul className="space-y-3">
-                  {['10 Campaigns', 'View 60 Influencers', 'Hire 25 Influencers', 'Advanced Reporting', 'Report Downloads'].map((feature, index) => (
+                  {['10 Campaigns', 'View 60 Influencers', 'Hire 25 Influencers', 'Advanced Reporting', 'Click Tracking', 'Report Downloads'].map((feature, index) => (
                     <li key={index} className="flex items-start space-x-3">
                       <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center mt-0.5">
                         <svg className="w-4 h-4" fill="none" stroke="#FCA311" strokeWidth="2" viewBox="0 0 24 24">

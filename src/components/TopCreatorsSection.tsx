@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import DatabaseTable from './DatabaseTable'
 
 const TopCreatorsSection = () => {
   const [searchQuery, setSearchQuery] = useState('')
@@ -8,6 +9,37 @@ const TopCreatorsSection = () => {
   const [selectedCity, setSelectedCity] = useState('All Cities')
   const [selectedPlatform, setSelectedPlatform] = useState('Instagram')
   const [sortBy, setSortBy] = useState('Ranking')
+  const [totalCreators, setTotalCreators] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
+
+  // Fetch total creators count from database
+  useEffect(() => {
+    const fetchTotalCount = async () => {
+      try {
+        const response = await fetch('/api/influencers?page=1&limit=1')
+        const data = await response.json()
+        if (data.pagination) {
+          setTotalCreators(data.pagination.total)
+        }
+      } catch (error) {
+        console.error('Error fetching total creators count:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTotalCount()
+  }, [])
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const creators = [
     {
@@ -201,7 +233,7 @@ const TopCreatorsSection = () => {
               color: '#14213D',
               marginBottom: '6px'
             }}>
-              12,847
+              {loading ? '...' : totalCreators.toLocaleString()}
             </p>
             <p style={{
               fontFamily: 'Inter',
@@ -464,19 +496,23 @@ const TopCreatorsSection = () => {
           </div>
         </div>
 
-        {/* Search Result Table */}
-        <h2 style={{
-          fontFamily: 'Inter',
-          fontWeight: 600,
-          fontSize: 'clamp(18px, 3vw, 20px)',
-          lineHeight: 'clamp(24px, 4vw, 28px)',
-          letterSpacing: '0%',
-          color: '#14213D'
-        }} className="mb-6">
-          Search result by : Ranking
-        </h2>
+        {/* Database Table - Under search bar */}
+        <DatabaseTable searchQuery={debouncedSearchQuery} />
 
-        <div className="overflow-x-auto rounded-xl border border-[#E5E7EB] shadow-sm">
+        {/* Search Result Table - HIDDEN */}
+        <div className="hidden">
+          <h2 style={{
+            fontFamily: 'Inter',
+            fontWeight: 600,
+            fontSize: 'clamp(18px, 3vw, 20px)',
+            lineHeight: 'clamp(24px, 4vw, 28px)',
+            letterSpacing: '0%',
+            color: '#14213D'
+          }} className="mb-6">
+            Search result by : Ranking
+          </h2>
+
+          <div className="overflow-x-auto rounded-xl border border-[#E5E7EB] shadow-sm">
           <table className="min-w-full divide-y divide-[#E5E7EB]">
             <thead className="bg-[#F9FAFB]">
               <tr>
@@ -718,7 +754,7 @@ const TopCreatorsSection = () => {
             lineHeight: 'clamp(16px, 3vw, 20px)',
             letterSpacing: '0%',
           }}>
-            Showing 1 to 10 of 12,847 results
+            Showing 1 to 10 of {totalCreators.toLocaleString()} results
           </p>
           
           {/* Desktop Pagination */}
@@ -919,6 +955,7 @@ const TopCreatorsSection = () => {
             </a>
           </nav>
         </div>
+        </div> {/* End of hidden table section */}
       </div>
     </div>
   )
