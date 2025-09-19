@@ -5,8 +5,8 @@ import pool from '@/lib/db';
 let allDataCache: any[] = [];
 let isLoaded = false;
 
-// Clear cache function for development
-export function clearCache() {
+// Clear cache function for development (internal only)
+function clearCache() {
   allDataCache = [];
   isLoaded = false;
   console.log('🗑️ Cache cleared');
