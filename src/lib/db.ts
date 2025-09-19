@@ -1,11 +1,11 @@
 import { Pool } from 'pg';
 
 const config = {
-  host: process.env.DB_HOST || 'swaykart-test.cd4ai80suo3k.ap-south-1.rds.amazonaws.com',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME || 'swaykart',
-  user: process.env.DB_USER || 'saiteja',
-  password: String(process.env.DB_PASSWORD || 'Swaykart@123'),
+  host: 'swaykart-test.cd4ai80suo3k.ap-south-1.rds.amazonaws.com',
+  port: 5432,
+  database: 'swaykart',
+  user: 'saiteja',
+  password: 'Swaykart@123',
   ssl: { rejectUnauthorized: false },
   // Optimize connection pool for better performance
   max: 20, // Maximum number of clients in the pool
