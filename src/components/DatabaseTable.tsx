@@ -1,83 +1,113 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 interface InfluencerData {
   [key: string]: any; // Allow any column from database
 }
 
-interface PaginationInfo {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-}
-
-interface ApiResponse {
-  data: InfluencerData[];
-  pagination: PaginationInfo;
-}
-
 interface DatabaseTableProps {
   searchQuery?: string;
+  allData?: any[];
+  loading?: boolean;
+  selectedCategory?: string;
+  sortBy?: string;
 }
 
-const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
-  const [data, setData] = useState<InfluencerData[]>([]);
-  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData = [], loading = false, selectedCategory = 'All Categories', sortBy = 'Ranking' }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [columns, setColumns] = useState<string[]>([]);
+  
+  // Debug: Log the sortBy prop
+  console.log('🎯 DatabaseTable received sortBy:', sortBy);
+  // Keep columns in same order regardless of sort
+  const columns = [
+    'influencer_rank',
+    'username', 
+    'categories_combined',
+    'followers_count',
+    'engagement_rate',
+    'credibility_score'
+  ];
+  
+  const itemsPerPage = 10;
 
-  const fetchData = useCallback(async (page: number = 1) => {
-    try {
-      setLoading(true);
-      
-      const searchParam = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
-      const response = await fetch(`/api/influencers?page=${page}&limit=10${searchParam}`, {
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
+  // Filter and sort data based on search query, selected category, and sort option
+  const filteredData = useMemo(() => {
+    let filtered = allData;
+    
+    // Filter by category first
+    if (selectedCategory && selectedCategory !== 'All Categories') {
+      filtered = filtered.filter(row => {
+        if (!row.categories_combined) return false;
+        const categories = row.categories_combined.split(',').map((cat: string) => cat.trim());
+        return categories.some((cat: string) => cat === selectedCategory);
       });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      
-      const result: ApiResponse = await response.json();
-      
-      setData(result.data);
-      setPagination(result.pagination);
-      
-      // Set specific columns to display
-      const specificColumns = [
-        'influencer_rank',
-        'username', 
-        'categories_combined',
-        'followers_count',
-        'engagement_rate',
-        'credibility_score'
-      ];
-      setColumns(specificColumns);
-    } catch (err) {
-      console.error('Fetch error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
     }
-  }, [searchQuery]);
+    
+    // Then filter by search query
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase();
+      filtered = filtered.filter(row => 
+        row.username?.toLowerCase().includes(searchLower) ||
+        row.categories_combined?.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Sort the filtered data
+    console.log('🔍 Sorting by:', sortBy, 'Filtered data length:', filtered.length);
+    
+    if (sortBy === 'Ranking') {
+      filtered = filtered.sort((a, b) => {
+        const rankA = parseInt(a.influencer_rank) || 0;
+        const rankB = parseInt(b.influencer_rank) || 0;
+        return rankA - rankB; // Ascending order (1, 2, 3...)
+      });
+      console.log('📊 Sorted by Ranking - First 3 ranks:', filtered.slice(0, 3).map(f => ({ rank: f.influencer_rank, username: f.username })));
+    } else if (sortBy === 'Followers') {
+      filtered = filtered.sort((a, b) => {
+        const followersA = parseInt(a.followers_count) || 0;
+        const followersB = parseInt(b.followers_count) || 0;
+        return followersB - followersA; // Descending order (highest first)
+      });
+      console.log('📊 Sorted by Followers - First 3 followers:', filtered.slice(0, 3).map(f => ({ followers: f.followers_count, username: f.username })));
+    }
+    
+    return filtered;
+  }, [allData, searchQuery, selectedCategory, sortBy]);
 
-  useEffect(() => {
-    fetchData(currentPage);
-  }, [currentPage, fetchData]);
+  // Paginate filtered data
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const result = filteredData.slice(startIndex, endIndex);
+    console.log('📄 Paginated data for', sortBy, ':', result.slice(0, 3).map(r => ({ 
+      rank: r.influencer_rank, 
+      username: r.username, 
+      followers: r.followers_count 
+    })));
+    return result;
+  }, [filteredData, currentPage, itemsPerPage, sortBy]);
 
+  // Calculate pagination info
+  const pagination = useMemo(() => {
+    const total = filteredData.length;
+    const totalPages = Math.ceil(total / itemsPerPage);
+    
+    return {
+      page: currentPage,
+      limit: itemsPerPage,
+      total,
+      totalPages,
+      hasNext: currentPage < totalPages,
+      hasPrev: currentPage > 1
+    };
+  }, [filteredData.length, currentPage, itemsPerPage]);
+
+  // Reset to first page when search, category, or sort changes
   useEffect(() => {
-    setCurrentPage(1); // Reset to first page when search changes
-    fetchData(1);
-  }, [searchQuery, fetchData]);
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, sortBy]);
 
   if (loading) {
     return (
@@ -90,7 +120,7 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
             fontSize: '16px',
             color: '#6B7280'
           }}>
-            Loading influencer data...
+            Loading all influencer data...
           </p>
         </div>
       </div>
@@ -324,7 +354,7 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
           letterSpacing: '0%',
           color: '#14213D',
         }}>
-          Search result by : Ranking
+          Search result by : {sortBy}
         </h2>
         {pagination && (
           <div style={{
@@ -339,14 +369,14 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-[#E5E7EB] shadow-sm">
-        <table className="min-w-full divide-y divide-[#E5E7EB]">
+        <table key={sortBy} className="min-w-full divide-y divide-[#E5E7EB]">
             <thead className="bg-[#F9FAFB]">
               <tr>
                 {columns.map((column, index) => {
                   const columnHeaders = {
                     'influencer_rank': 'Rank',
                     'username': 'Username',
-                    'categories_combined': 'Industries',
+                    'categories_combined': 'Categories',
                     'followers_count': 'Followers',
                     'engagement_rate': 'Engagement',
                     'credibility_score': 'Credibility Score'
@@ -367,8 +397,8 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
                 })}
               </tr>
             </thead>
-          <tbody className="bg-white divide-y divide-[#E5E7EB]">
-            {data.map((influencer, index) => (
+          <tbody key={`tbody-${sortBy}`} className="bg-white divide-y divide-[#E5E7EB]">
+            {paginatedData.map((influencer, index) => (
               <tr key={influencer.id || index} className="bg-[#00000000] hover:bg-[#FCA3111A] transition-colors duration-200 cursor-pointer">
                 {columns.map((column, colIndex) => (
                   <td key={colIndex} className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap">
@@ -411,73 +441,81 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
               <i className="fa-solid fa-chevron-left mr-1"></i>
               Previous
             </button>
-            <button
-              onClick={() => setCurrentPage(1)}
-              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                currentPage === 1
-                  ? 'z-10 bg-[#14213D] text-white border-[#14213D]'
-                  : 'bg-white text-[#4B5563] border-[#E5E7EB] hover:bg-gray-50'
-              }`}
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 400,
-                lineHeight: '20px',
-                letterSpacing: '0%',
-              }}
-            >
-              1
-            </button>
-            <button
-              onClick={() => setCurrentPage(2)}
-              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                currentPage === 2
-                  ? 'z-10 bg-[#14213D] text-white border-[#14213D]'
-                  : 'bg-white text-[#4B5563] border-[#E5E7EB] hover:bg-gray-50'
-              }`}
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 400,
-                lineHeight: '20px',
-                letterSpacing: '0%',
-              }}
-            >
-              2
-            </button>
-            <button
-              onClick={() => setCurrentPage(3)}
-              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                currentPage === 3
-                  ? 'z-10 bg-[#14213D] text-white border-[#14213D]'
-                  : 'bg-white text-[#4B5563] border-[#E5E7EB] hover:bg-gray-50'
-              }`}
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 400,
-                lineHeight: '20px',
-                letterSpacing: '0%',
-              }}
-            >
-              3
-            </button>
-            <span className="relative inline-flex items-center px-4 py-2 border border-[#E5E7EB] bg-white text-sm font-medium text-[#4B5563]">
-              ...
-            </span>
-            <button
-              onClick={() => setCurrentPage(pagination.totalPages)}
-              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                currentPage === pagination.totalPages
-                  ? 'z-10 bg-[#14213D] text-white border-[#14213D]'
-                  : 'bg-white text-[#4B5563] border-[#E5E7EB] hover:bg-gray-50'
-              }`}
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 400,
-                lineHeight: '20px',
-                letterSpacing: '0%',
-              }}
-            >
-              {pagination.totalPages}
-            </button>
+            
+            {/* Smart Pagination Logic */}
+            {(() => {
+              const totalPages = pagination.totalPages;
+              const current = currentPage;
+              const pages = [];
+              
+              // Always show first page
+              pages.push(1);
+              
+              // Calculate range around current page
+              let startPage = Math.max(2, current - 1);
+              let endPage = Math.min(totalPages - 1, current + 1);
+              
+              // Adjust range if we're near the beginning or end
+              if (current <= 3) {
+                endPage = Math.min(5, totalPages - 1);
+              }
+              if (current >= totalPages - 2) {
+                startPage = Math.max(2, totalPages - 4);
+              }
+              
+              // Add ellipsis after first page if needed
+              if (startPage > 2) {
+                pages.push('...');
+              }
+              
+              // Add pages in range
+              for (let i = startPage; i <= endPage; i++) {
+                if (i !== 1 && i !== totalPages) {
+                  pages.push(i);
+                }
+              }
+              
+              // Add ellipsis before last page if needed
+              if (endPage < totalPages - 1) {
+                pages.push('...');
+              }
+              
+              // Always show last page (if more than 1 page)
+              if (totalPages > 1) {
+                pages.push(totalPages);
+              }
+              
+              return pages.map((page, index) => {
+                if (page === '...') {
+                  return (
+                    <span key={`ellipsis-${index}`} className="relative inline-flex items-center px-4 py-2 border border-[#E5E7EB] bg-white text-sm font-medium text-[#4B5563]">
+                      ...
+                    </span>
+                  );
+                }
+                
+                return (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                      currentPage === page
+                        ? 'z-10 bg-[#14213D] text-white border-[#14213D]'
+                        : 'bg-white text-[#4B5563] border-[#E5E7EB] hover:bg-gray-50'
+                    }`}
+                    style={{
+                      fontFamily: 'Inter',
+                      fontWeight: 400,
+                      lineHeight: '20px',
+                      letterSpacing: '0%',
+                    }}
+                  >
+                    {page}
+                  </button>
+                );
+              });
+            })()}
+            
             <button
               onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
               disabled={!pagination.hasNext}
@@ -536,7 +574,7 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
       )}
 
 
-      {data.length === 0 && !loading && (
+      {paginatedData.length === 0 && !loading && (
         <div className="text-center py-12">
           <div className="text-gray-400 mb-4">
             <i className="fa-solid fa-database text-4xl"></i>
@@ -547,7 +585,7 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '' }) => {
             fontSize: '16px',
             color: '#6B7280'
           }}>
-            No data found in the database
+            {searchQuery ? 'No results found for your search' : 'No data found in the database'}
           </p>
         </div>
       )}

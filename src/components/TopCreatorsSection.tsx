@@ -6,31 +6,68 @@ import DatabaseTable from './DatabaseTable'
 
 const TopCreatorsSection = () => {
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedIndustry, setSelectedIndustry] = useState('All Industries')
+  const [selectedIndustry, setSelectedIndustry] = useState('All Categories')
   const [selectedCity, setSelectedCity] = useState('All Cities')
   const [selectedPlatform, setSelectedPlatform] = useState('Instagram')
   const [sortBy, setSortBy] = useState('Ranking')
   const [totalCreators, setTotalCreators] = useState(0)
   const [loading, setLoading] = useState(true)
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
+  const [categories, setCategories] = useState<string[]>([])
+  const [allData, setAllData] = useState<any[]>([])
+  const [categoriesCount, setCategoriesCount] = useState(0)
 
-  // Fetch total creators count from database
+  // Fetch total count immediately on component mount
   useEffect(() => {
     const fetchTotalCount = async () => {
       try {
-        const response = await fetch('/api/influencers?page=1&limit=1')
-        const data = await response.json()
-        if (data.pagination) {
-          setTotalCreators(data.pagination.total)
+        console.log('🚀 Fetching total count...');
+        const startTime = Date.now();
+        
+            const response = await fetch('/api/influencers');
+        const data = await response.json();
+        
+        if (data.total) {
+          setTotalCreators(data.total);
         }
+        
+        // Store all data and extract unique categories
+        if (data.data && Array.isArray(data.data)) {
+          setAllData(data.data);
+          
+          // Extract ALL categories from ALL records
+          const allCategories = new Set<string>();
+          
+          // Process ALL records to get complete category list
+          for (let i = 0; i < data.data.length; i++) {
+            const influencer = data.data[i];
+            if (influencer.categories_combined) {
+              // Fast split and add
+              const categories = influencer.categories_combined.split(',');
+              for (const cat of categories) {
+                const trimmed = cat.trim();
+                if (trimmed) allCategories.add(trimmed);
+              }
+            }
+          }
+          
+          // Convert Set to Array and sort
+          const uniqueCategories = Array.from(allCategories).sort();
+          setCategories(uniqueCategories);
+          setCategoriesCount(uniqueCategories.length);
+          console.log(`✅ Found ${uniqueCategories.length} unique categories from ALL ${data.data.length} records`);
+        }
+        
+        const loadTime = Date.now() - startTime;
+        console.log(`✅ Total count loaded in ${loadTime}ms: ${data.total} records`);
       } catch (error) {
-        console.error('Error fetching total creators count:', error)
+        console.error('Error fetching total count:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchTotalCount()
+    fetchTotalCount();
   }, [])
 
   // Debounce search query
@@ -207,7 +244,7 @@ const TopCreatorsSection = () => {
                 letterSpacing: '0%',
                 color: '#4B5563'
               }}>
-                Discover the most influential content creators across all platforms and industries
+                Discover the most influential content creators across all platforms and categories
               </p>
             </div>
           </div>
@@ -314,7 +351,7 @@ const TopCreatorsSection = () => {
               color: '#14213D',
               marginBottom: '6px'
             }}>
-              127
+              {loading ? '...' : categoriesCount}
             </p>
             <p style={{
               fontFamily: 'Inter',
@@ -325,7 +362,7 @@ const TopCreatorsSection = () => {
               textAlign: 'center',
               color: '#4B5563'
             }}>
-              Industries
+              Categories
             </p>
           </div>
         </div>
@@ -363,10 +400,10 @@ const TopCreatorsSection = () => {
                     letterSpacing: '0%',
                   }}
                 >
-                  <option value="All Industries">All Industries</option>
-                  <option value="Beauty & Fashion">Beauty & Fashion</option>
-                  <option value="Food & Lifestyle">Food & Lifestyle</option>
-                  <option value="Tech & Gaming">Tech & Gaming</option>
+                  <option value="All Categories">All Categories</option>
+                  {categories.map((category, index) => (
+                    <option key={index} value={category}>{category}</option>
+                  ))}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -408,11 +445,7 @@ const TopCreatorsSection = () => {
                   onChange={(e) => {
                     setSelectedPlatform(e.target.value)
                     // Reset sort by to first option when platform changes
-                    if (e.target.value === 'Instagram') {
-                      setSortBy('Ranking')
-                    } else if (e.target.value === 'YouTube') {
-                      setSortBy('Ranking')
-                    }
+                    setSortBy('Ranking')
                   }}
                     className="block w-full px-3 sm:px-4 py-2 pr-8 text-sm text-[#14213D] bg-white border border-[#E5E7EB] rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FCA311] focus:border-[#FCA311] appearance-none"
                   style={{
@@ -424,7 +457,6 @@ const TopCreatorsSection = () => {
                   }}
                 >
                   <option value="Instagram">Instagram</option>
-                  <option value="YouTube">YouTube</option>
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -448,17 +480,7 @@ const TopCreatorsSection = () => {
                     }}
                   >
                     <option value="Ranking">Ranking</option>
-                    {selectedPlatform === 'Instagram' ? (
-                      <>
-                        <option value="Followers">Followers</option>
-                        <option value="Growth Rate">Growth Rate</option>
-                      </>
-                    ) : (
-                      <>
-                        <option value="Subscribers">Subscribers</option>
-                        <option value="Growth Rate">Growth Rate</option>
-                      </>
-                    )}
+                    <option value="Followers">Followers</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -490,7 +512,7 @@ const TopCreatorsSection = () => {
             </div>
             <input
               type="text"
-              placeholder="Search influencers, Categories ...."
+              placeholder="Search Influencers, Categories ...."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="block w-full pl-10 sm:pl-12 pr-4 sm:pr-6 py-3 sm:py-4 text-base text-[#14213D] bg-white border border-[#E5E7EB] rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FCA311] focus:border-[#FCA311]"
@@ -506,7 +528,13 @@ const TopCreatorsSection = () => {
         </div>
 
         {/* Database Table - Under search bar */}
-        <DatabaseTable searchQuery={debouncedSearchQuery} />
+        <DatabaseTable 
+          searchQuery={debouncedSearchQuery} 
+          allData={allData} 
+          loading={loading}
+          selectedCategory={selectedIndustry}
+          sortBy={sortBy}
+        />
 
         {/* Search Result Table - HIDDEN */}
         <div className="hidden">
@@ -559,7 +587,7 @@ const TopCreatorsSection = () => {
                   lineHeight: '100%',
                   letterSpacing: '0%',
                 }}>
-                  Industry
+                  Categories
                 </th>
                 <th scope="col" className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left text-sm font-medium text-[#374151] tracking-wider" style={{
                   fontFamily: 'Inter',

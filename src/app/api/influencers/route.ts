@@ -1,82 +1,79 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
-export async function GET(request: Request) {
+// Simple cache - load once and keep in memory
+let allDataCache: any[] = [];
+let isLoaded = false;
+
+// Clear cache function for development
+export function clearCache() {
+  allDataCache = [];
+  isLoaded = false;
+  console.log('🗑️ Cache cleared');
+}
+
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const search = searchParams.get('search') || '';
-    const offset = (page - 1) * limit;
+    console.log('🚀 Fetching influencer data...');
+    const startTime = Date.now();
 
-    console.log('🔍 API: Search query:', search);
-
-    const client = await pool.connect();
-    
-    let countResult, dataResult;
-    
-    if (search) {
-      // With search - use separate queries with proper parameter indexing
-      const searchPattern = `%${search}%`;
+    // Load data only once
+    if (!isLoaded) {
+      const client = await pool.connect();
       
-      countResult = await client.query(`
-        SELECT COUNT(DISTINCT id) as total FROM scrapped.influencer_ui 
-        WHERE (
-          LOWER(username) LIKE LOWER($1) OR 
-          LOWER(categories_combined) LIKE LOWER($1)
-        )
-      `, [searchPattern]);
+      const result = await client.query(`
+        SELECT DISTINCT ON (id)
+          id,
+          influencer_rank,
+          username,
+          verified,
+          categories_combined,
+          followers_count,
+          engagement_rate,
+          credibility_score
+        FROM scrapped.influencer_ui 
+        WHERE influencer_rank IS NOT NULL
+        ORDER BY id ASC
+      `);
       
-      dataResult = await client.query(`
-        SELECT * FROM (
-          SELECT DISTINCT ON (id) * FROM scrapped.influencer_ui 
-          WHERE (
-            LOWER(username) LIKE LOWER($1) OR 
-            LOWER(categories_combined) LIKE LOWER($1)
-          )
-          ORDER BY id
-        ) AS unique_influencers
-        ORDER BY influencer_rank ASC 
-        LIMIT $2 OFFSET $3
-      `, [searchPattern, limit, offset]);
-    } else {
-      // Without search - original query
-      countResult = await client.query('SELECT COUNT(DISTINCT id) as total FROM scrapped.influencer_ui');
+      // More robust deduplication using Map
+      const uniqueMap = new Map();
+      result.rows.forEach(row => {
+        if (!uniqueMap.has(row.id)) {
+          uniqueMap.set(row.id, row);
+        }
+      });
+      const uniqueData = Array.from(uniqueMap.values());
       
-      dataResult = await client.query(`
-        SELECT * FROM (
-          SELECT DISTINCT ON (id) * FROM scrapped.influencer_ui 
-          ORDER BY id
-        ) AS unique_influencers
-        ORDER BY influencer_rank ASC 
-        LIMIT $1 OFFSET $2
-      `, [limit, offset]);
+      // Quick duplicate check
+      const uniqueIds = new Set(uniqueData.map(item => item.id));
+      if (uniqueIds.size !== uniqueData.length) {
+        console.log('⚠️ Duplicates detected, filtering...');
+        const finalData = uniqueData.filter((item, index, self) => 
+          index === self.findIndex(t => t.id === item.id)
+        );
+        allDataCache = finalData;
+      } else {
+        allDataCache = uniqueData;
+      }
+      isLoaded = true;
+      client.release();
+      
+      const loadTime = Date.now() - startTime;
+      console.log(`✅ Loaded ${allDataCache.length} records in ${loadTime}ms`);
     }
     
-    const total = parseInt(countResult.rows[0].total);
-    client.release();
-    
-    console.log('✅ API: Successfully fetched', dataResult.rows.length, 'records');
-    
     const response = NextResponse.json({
-      data: dataResult.rows,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-        hasNext: page < Math.ceil(total / limit),
-        hasPrev: page > 1
-      }
+      data: allDataCache,
+      total: allDataCache.length
     });
 
-    // Add caching headers for better performance
-    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    response.headers.set('Cache-Control', 'public, max-age=7200, s-maxage=3600, stale-while-revalidate=14400');
+    response.headers.set('X-Cache-Status', 'HIT');
     
     return response;
   } catch (error) {
-    console.error('❌ Database error:', error instanceof Error ? error.message : 'Unknown error');
-    console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('❌ Database error:', error);
     
     return NextResponse.json(
       { 
