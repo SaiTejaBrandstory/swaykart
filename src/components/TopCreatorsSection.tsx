@@ -528,13 +528,20 @@ const TopCreatorsSection = () => {
         </div>
 
         {/* Database Table - Under search bar */}
-        <DatabaseTable 
-          searchQuery={debouncedSearchQuery} 
-          allData={allData} 
-          loading={loading}
-          selectedCategory={selectedIndustry}
-          sortBy={sortBy}
-        />
+        {allData.length > 0 ? (
+          <DatabaseTable 
+            searchQuery={debouncedSearchQuery} 
+            allData={allData} 
+            loading={loading}
+            selectedCategory={selectedIndustry}
+            sortBy={sortBy}
+          />
+        ) : (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FCA311] mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading influencer data...</p>
+          </div>
+        )}
 
         {/* Search Result Table - HIDDEN */}
         <div className="hidden">

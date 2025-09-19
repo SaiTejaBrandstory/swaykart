@@ -34,6 +34,7 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
 
   // Filter and sort data based on search query, selected category, and sort option
   const filteredData = useMemo(() => {
+    console.log('🔍 DatabaseTable - allData length:', allData.length, 'selectedCategory:', selectedCategory, 'searchQuery:', searchQuery);
     let filtered = allData;
     
     // Filter by category first
