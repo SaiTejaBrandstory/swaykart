@@ -15,35 +15,14 @@ function clearCache() {
 export async function GET() {
   try {
     console.log('🚀 Fetching influencer data...');
+    console.log('📊 Cache status - isLoaded:', isLoaded, 'cache length:', allDataCache.length);
     const startTime = Date.now();
 
     // Load data only once
     if (!isLoaded) {
       console.log('📡 Connecting to database...');
-      
-      // Retry connection with exponential backoff
-      let client;
-      let retries = 3;
-      let delay = 1000;
-      
-      while (retries > 0) {
-        try {
-          client = await pool.connect();
-          console.log('✅ Database connected successfully');
-          break;
-        } catch (error) {
-          retries--;
-          console.log(`❌ Connection failed, retries left: ${retries}`);
-          
-          if (retries === 0) {
-            throw error;
-          }
-          
-          // Wait before retry
-          await new Promise(resolve => setTimeout(resolve, delay));
-          delay *= 2; // Exponential backoff
-        }
-      }
+      const client = await pool.connect();
+      console.log('✅ Database connected successfully');
       
       const result = await client.query(`
         SELECT DISTINCT ON (id)
@@ -85,18 +64,11 @@ export async function GET() {
       
       const loadTime = Date.now() - startTime;
       console.log(`✅ Loaded ${allDataCache.length} records in ${loadTime}ms`);
+    } else {
+      console.log('📦 Using cached data');
     }
     
-    // Check if we have data
-    if (allDataCache.length === 0) {
-      console.log('⚠️ No data available, returning empty array');
-      return NextResponse.json({
-        data: [],
-        total: 0,
-        message: 'No data available'
-      });
-    }
-
+    console.log('📤 Returning data - length:', allDataCache.length);
     const response = NextResponse.json({
       data: allDataCache,
       total: allDataCache.length
@@ -109,31 +81,12 @@ export async function GET() {
   } catch (error) {
     console.error('❌ Database error:', error);
     
-    // More detailed error logging for Vercel
-    if (error instanceof Error) {
-      console.error('Error name:', error.name);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-    }
-    
-    // Return cached data if available, otherwise return empty
-    if (allDataCache.length > 0) {
-      console.log('🔄 Returning cached data due to connection error');
-      return NextResponse.json({
-        data: allDataCache,
-        total: allDataCache.length,
-        warning: 'Using cached data due to connection issues'
-      });
-    }
-    
     return NextResponse.json(
       { 
-        error: 'Database connection failed',
-        details: error instanceof Error ? error.message : 'Unknown error',
-        type: error instanceof Error ? error.name : 'UnknownError',
-        suggestion: 'Please try again in a few moments'
+        error: 'Failed to fetch influencers',
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
-      { status: 503 } // Service Unavailable
+      { status: 500 }
     );
   }
 }
