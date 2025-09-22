@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { PoolClient } from 'pg';
 
 // Retry function for database operations
 async function withRetry<T>(
@@ -25,7 +26,7 @@ async function withRetry<T>(
 }
 
 export async function GET() {
-  let client;
+  let client: PoolClient | undefined;
   
   try {
     console.log('🚀 Fetching fresh influencer data...');
@@ -40,6 +41,9 @@ export async function GET() {
 
     // Optimized query with timeout handling
     const result = await withRetry(async () => {
+      if (!client) {
+        throw new Error('Database client not available');
+      }
       return await client.query(`
         SELECT DISTINCT ON (id)
           id,
