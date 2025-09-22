@@ -110,66 +110,64 @@ export default function InfluencerProfile() {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Influencer Profile Card */}
-        <div className="bg-white rounded-2xl shadow-sm p-8 mb-8" style={{ border: '1px solid #E5E7EB' }}>
+        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8" style={{ border: '1px solid #E5E7EB' }}>
           {/* Main Profile Section */}
-          <div className="flex items-start gap-6">
-            {/* Profile Image */}
-            <div className="flex-shrink-0">
-              <img
-                src="/images/leaderboard/creator-icons/creator-1.svg"
-                alt={influencer.username}
-                className="w-20 h-20 rounded-full object-cover"
-              />
+          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+            {/* Profile Icon */}
+            <div className="flex-shrink-0 mx-auto sm:mx-0">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 512 512" 
+                className="w-16 h-16 sm:w-20 sm:h-20 text-orange-600"
+              >
+                <path 
+                  d="M256 73.825c-100.613 0-182.18 81.562-182.18 182.17a182.18 182.18 0 0 0 364.36 0c0-100.608-81.572-182.17-182.18-182.17zm.553 268.12h-78.93c0-56.91 49.98-56.901 61.07-71.773l1.27-6.793c-15.582-7.893-26.582-26.939-26.582-49.201 0-29.33 19.081-53.122 42.619-53.122 23.532 0 42.61 23.793 42.61 53.122 0 22.078-10.802 41-26.175 49.017l1.442 7.716c12.172 14.16 60.486 15.082 60.486 71.034z" 
+                  data-name="Profile Male"
+                  fill="currentColor"
+                />
+              </svg>
             </div>
             
             {/* Profile Details */}
-            <div className="flex-1">
-              <div className="flex items-start justify-between">
-                {/* Left Side - Profile Details and Rank Badge side by side */}
-                <div className="flex items-start gap-8">
-                  <div className="flex-3">
-                    <h1 style={{
+            <div className="flex-1 w-full">
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                {/* Left Side - Profile Details and Rank Badge */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 lg:gap-8">
+                  <div className="flex-1 text-center sm:text-left">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900 mb-2 break-words" style={{
                       fontFamily: 'Inter',
                       fontWeight: 600,
-                      fontSize: '30px',
-                      lineHeight: '40px',
-                      color: '#14213D',
-                      marginBottom: '8px'
+                      color: '#14213D'
                     }}>{influencer.username}</h1>
                     
-                    <p style={{
+                    <p className="text-sm sm:text-base lg:text-lg text-gray-600 mb-3 break-words" style={{
                       fontFamily: 'Inter',
                       fontWeight: 400,
-                      fontSize: '18px',
-                      lineHeight: '28px',
-                      color: '#14213D99',
-                      marginBottom: '12px'
+                      color: '#14213D99'
                     }}>@{influencer.username}</p>
                     
-                    {/* Location and Join Date */}
-                    <div className="space-y-1 mb-4">
-                      <div className="flex items-center gap-2" style={{ color: '#14213D' }}>
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#14213D' }}>
+                    {/* Location and Rank */}
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center justify-center sm:justify-start gap-2" style={{ color: '#14213D' }}>
+                        <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#14213D' }}>
                           <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                         </svg>
-                        <span style={{
+                        <span className="text-sm break-words" style={{
                           fontFamily: 'Inter',
                           fontWeight: 400,
-                          fontSize: '14px',
                           lineHeight: '20px',
                           letterSpacing: '0%'
                         }}>{influencer.location || 'Location not specified'}</span>
                       </div>
-                      <div className="flex items-center gap-2" style={{ color: '#14213D' }}>
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#14213D' }}>
+                      <div className="flex items-center justify-center sm:justify-start gap-2" style={{ color: '#14213D' }}>
+                        <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#14213D' }}>
                           <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                         </svg>
-                        <span style={{
+                        <span className="text-sm break-words" style={{
                           fontFamily: 'Inter',
                           fontWeight: 400,
-                          fontSize: '14px',
                           lineHeight: '20px',
                           letterSpacing: '0%'
                         }}>Ranked #{influencer.influencer_rank}</span>
@@ -177,53 +175,45 @@ export default function InfluencerProfile() {
                     </div>
                   </div>
                   
-                  {/* Rank Badge - Side by side with profile details */}
-                  <div className="bg-gray-100 rounded-lg text-center" style={{ padding: '16px' }}>
+                  {/* Rank Badge */}
+                  <div className="bg-gray-100 rounded-lg text-center mx-auto sm:mx-0" style={{ padding: '12px 16px', minWidth: '120px' }}>
                     <div className="flex flex-col items-center">
-                      <i className="fas fa-crown w-6 h-6 mb-2" style={{ color: '#FCA311' }}></i>
-                      <div style={{
+                      <i className="fas fa-crown w-5 h-5 sm:w-6 sm:h-6 mb-2" style={{ color: '#FCA311' }}></i>
+                      <div className="text-base sm:text-lg font-bold text-gray-900 mb-1" style={{
                         fontFamily: 'Inter',
                         fontWeight: 700,
-                        fontSize: '18px',
-                        lineHeight: '100%',
-                        color: '#14213D',
-                        textAlign: 'center',
-                        marginBottom: '4px'
+                        color: '#14213D'
                       }}>#{influencer.influencer_rank}</div>
-                      <div style={{
+                      <div className="text-xs sm:text-sm text-gray-600" style={{
                         fontFamily: 'Inter',
                         fontWeight: 400,
-                        fontSize: '14px',
-                        lineHeight: '100%',
-                        color: '#6B7280',
-                        textAlign: 'center'
+                        color: '#6B7280'
                       }}>Ranked</div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Right Side - Last Updated and Action Buttons */}
-                <div className="flex flex-col items-end gap-4">
-                  
+                {/* Right Side - Action Buttons */}
+                <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-3">
                   {/* Action Buttons */}
-                  <div className="flex gap-3">
-                    <button className="text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 hover:opacity-90" style={{ backgroundColor: '#FCA311' }}>
+                  <div className="flex flex-wrap justify-center lg:justify-end gap-2 sm:gap-3">
+                    <button className="text-white px-4 sm:px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 hover:opacity-90 text-sm sm:text-base" style={{ backgroundColor: '#FCA311' }}>
                       <svg className="w-4 h-4" fill="none" stroke="white" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                      Contact
+                      <span className="hidden sm:inline">Contact</span>
                     </button>
-                    <button className="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2">
+                    <button className="border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm sm:text-base">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
-                      Save
+                      <span className="hidden sm:inline">Save</span>
                     </button>
-                    <button className="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2">
+                    <button className="border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm sm:text-base">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                       </svg>
-                      Share
+                      <span className="hidden sm:inline">Share</span>
                     </button>
                   </div>
                 </div>
@@ -280,36 +270,36 @@ export default function InfluencerProfile() {
         </div>
 
         {/* Profile Analytics Dashboard */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8" style={{ fontFamily: 'Inter' }}>Profile Analytics</h2>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8" style={{ fontFamily: 'Inter' }}>Profile Analytics</h2>
           
           {/* Top Section - Two main metrics side by side */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
             {/* Followers Metric */}
-            <div className="text-center p-6 rounded-lg" style={{ 
+            <div className="text-center p-4 sm:p-6 rounded-lg" style={{ 
               backgroundColor: '#F9FAFB',
               border: '1px solid #E5E7EB'
             }}>
-              <div className="text-5xl font-bold mb-2" style={{ 
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2" style={{ 
                 fontFamily: 'Inter', 
                 color: '#14213D' 
               }}>{influencer.followers_count?.toLocaleString() || 'N/A'}</div>
-              <div className="text-lg mb-2" style={{ 
+              <div className="text-base sm:text-lg mb-2" style={{ 
                 fontFamily: 'Inter', 
                 color: '#6B7280' 
               }}>Followers</div>
             </div>
             
             {/* Engagement Metric */}
-            <div className="text-center p-6 rounded-lg" style={{ 
+            <div className="text-center p-4 sm:p-6 rounded-lg" style={{ 
               backgroundColor: '#F9FAFB',
               border: '1px solid #E5E7EB'
             }}>
-              <div className="text-5xl font-bold mb-2" style={{ 
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2" style={{ 
                 fontFamily: 'Inter', 
                 color: '#EC4899' 
               }}>{influencer.engagement_rate}%</div>
-              <div className="text-lg mb-2" style={{ 
+              <div className="text-base sm:text-lg mb-2" style={{ 
                 fontFamily: 'Inter', 
                 color: '#6B7280' 
               }}>Engagement</div>
@@ -317,7 +307,7 @@ export default function InfluencerProfile() {
           </div>
           
           {/* Bottom Section - Six additional metrics in a row */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
             {/* Posts Count */}
             <div className="text-center">
               <div className="text-2xl font-bold mb-1" style={{ 
@@ -393,12 +383,12 @@ export default function InfluencerProfile() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8">
-          <div className="flex space-x-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 overflow-x-auto">
             {/* Overview */}
             <button 
               onClick={() => setActiveTab('overview')}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-md" 
+              className="flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-md text-sm sm:text-base whitespace-nowrap" 
               style={{ 
                 backgroundColor: activeTab === 'overview' ? '#FCA311' : 'transparent',
                 color: activeTab === 'overview' ? 'white' : '#14213D',
@@ -424,7 +414,7 @@ export default function InfluencerProfile() {
             {/* Content */}
             <button 
               onClick={() => setActiveTab('content')}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-md" 
+              className="flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-md text-sm sm:text-base whitespace-nowrap" 
               style={{ 
                 backgroundColor: activeTab === 'content' ? '#FCA311' : 'transparent',
                 color: activeTab === 'content' ? 'white' : '#14213D',
@@ -450,7 +440,7 @@ export default function InfluencerProfile() {
             {/* Brand Safety */}
             <button 
               onClick={() => setActiveTab('brand-safety')}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-md" 
+              className="flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-md text-sm sm:text-base whitespace-nowrap" 
               style={{ 
                 backgroundColor: activeTab === 'brand-safety' ? '#FCA311' : 'transparent',
                 color: activeTab === 'brand-safety' ? 'white' : '#14213D',
