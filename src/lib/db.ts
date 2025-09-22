@@ -7,7 +7,7 @@ const isVercel = process.env.VERCEL === '1';
 let pool: Pool | null = null;
 
 function getPoolConfig() {
-  return {
+  const baseConfig: any = {
     connectionString: process.env.DATABASE_URL,
     // Fallback to individual variables if DATABASE_URL is not available
     ...(process.env.DATABASE_URL ? {} : {
@@ -17,10 +17,6 @@ function getPoolConfig() {
       user: process.env.DB_USER || 'saiteja',
       password: process.env.DB_PASSWORD || 'Swaykart@123',
     }),
-    // SSL configuration - explicitly allow self-signed certs
-    ssl: {
-      rejectUnauthorized: false, // 👈 allows self-signed certs
-    },
     // Vercel-optimized settings for serverless
     max: 1, // Single connection for serverless
     min: 0, // No minimum connections
@@ -32,6 +28,23 @@ function getPoolConfig() {
     allowExitOnIdle: true, // Important for serverless
     maxUses: 1 // Single use per connection
   };
+
+  // SSL configuration - use AWS RDS CA cert for production/Vercel
+  if (process.env.VERCEL === "1" || process.env.NODE_ENV === "production") {
+    if (process.env.RDS_CA_CERT) {
+      baseConfig.ssl = {
+        ca: Buffer.from(process.env.RDS_CA_CERT, "base64").toString("utf-8"),
+      };
+    } else {
+      // fallback (less secure)
+      baseConfig.ssl = { rejectUnauthorized: false };
+    }
+  } else {
+    // Development - allow self-signed certs
+    baseConfig.ssl = { rejectUnauthorized: false };
+  }
+
+  return baseConfig;
 }
 
 // Lazy connection - only create pool when needed
