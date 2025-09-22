@@ -120,7 +120,7 @@ const CreatorFeatures = () => {
             }}>
               <div className="lg:w-5/12 h-full mx-auto">
                 <img 
-                  src="/images/influencers/iphone-2.png" 
+                  src="/images/influencers/iphone-3.png" 
                   alt="iPhone Interface" 
                   className="w-full h-full object-cover"
                 />
