@@ -1,30 +1,61 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
+// Retry function for database operations
+async function withRetry<T>(
+  operation: () => Promise<T>,
+  maxRetries: number = 3,
+  delay: number = 1000
+): Promise<T> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      console.log(`Attempt ${attempt}/${maxRetries} failed:`, error);
+      
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      
+      // Exponential backoff
+      await new Promise(resolve => setTimeout(resolve, delay * attempt));
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
+
 export async function GET() {
+  let client;
+  
   try {
     console.log('🚀 Fetching fresh influencer data...');
     const startTime = Date.now();
 
-    // Always fetch fresh data from database
-    const client = await pool.connect();
-    console.log('✅ Database connected successfully');
-    
-    const result = await client.query(`
-      SELECT DISTINCT ON (id)
-        id,
-        influencer_rank,
-        username,
-        verified,
-        categories_combined,
-        followers_count,
-        engagement_rate,
-        credibility_score
-      FROM scrapped.influencer_ui 
-      WHERE influencer_rank IS NOT NULL
-      ORDER BY id ASC
-    `);
-    
+    // Use retry logic for database connection
+    client = await withRetry(async () => {
+      const conn = await pool.connect();
+      console.log('✅ Database connected successfully');
+      return conn;
+    });
+
+    // Optimized query with timeout handling
+    const result = await withRetry(async () => {
+      return await client.query(`
+        SELECT DISTINCT ON (id)
+          id,
+          influencer_rank,
+          username,
+          verified,
+          categories_combined,
+          followers_count,
+          engagement_rate,
+          credibility_score
+        FROM scrapped.influencer_ui 
+        WHERE influencer_rank IS NOT NULL
+        ORDER BY id ASC
+      `);
+    });
+
     // More robust deduplication using Map
     const uniqueMap = new Map();
     result.rows.forEach(row => {
@@ -44,10 +75,8 @@ export async function GET() {
       );
     }
     
-    client.release();
-    
     const loadTime = Date.now() - startTime;
-    console.log(`✅ Loaded ${finalData.length} fresh records in ${loadTime}ms`);
+    console.log(`✅ Loaded ${finalData.length} total records in ${loadTime}ms`);
     
     const response = NextResponse.json({
       data: finalData,
@@ -62,12 +91,37 @@ export async function GET() {
   } catch (error) {
     console.error('❌ Database error:', error);
     
+    // More specific error handling
+    let errorMessage = 'Unknown error';
+    let statusCode = 500;
+    
+    if (error instanceof Error) {
+      if (error.message.includes('timeout')) {
+        errorMessage = 'Database connection timeout - please try again';
+        statusCode = 408;
+      } else if (error.message.includes('connection')) {
+        errorMessage = 'Database connection failed - please try again';
+        statusCode = 503;
+      } else {
+        errorMessage = error.message;
+      }
+    }
+    
     return NextResponse.json(
       { 
         error: 'Failed to fetch influencers',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: errorMessage
       },
-      { status: 500 }
+      { status: statusCode }
     );
+  } finally {
+    // Always release the client
+    if (client) {
+      try {
+        client.release();
+      } catch (releaseError) {
+        console.error('Error releasing client:', releaseError);
+      }
+    }
   }
 }
