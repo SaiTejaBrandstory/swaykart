@@ -311,21 +311,21 @@ const MeetOurInfluencers = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-                <input
-                  type="text"
+                                 <input
+                   type="text"
                   placeholder={isSearching ? "Searching..." : "Search influencers"}
-                  value={searchQuery}
+                   value={searchQuery}
                   onChange={handleSearchChange}
                   onFocus={handleInputFocus}
                   onBlur={handleInputBlur}
                   disabled={isSearching}
                   className="w-full pl-12 pr-4 py-4 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none disabled:opacity-50"
-                  style={{ 
-                    fontSize: 'clamp(14px, 2.5vw, 18px)',
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E5E7EB'
-                  }}
-                />
+                   style={{ 
+                     fontSize: 'clamp(14px, 2.5vw, 18px)',
+                     backgroundColor: '#FFFFFF',
+                     border: '1px solid #E5E7EB'
+                   }}
+                 />
                 
                 {/* Suggestions Dropdown */}
                 {showSuggestions && (
@@ -345,7 +345,7 @@ const MeetOurInfluencers = () => {
                       <>
                         <div className="p-2 text-sm text-gray-600 border-b border-gray-100">
                           Showing {suggestions.length} results{suggestions.length === 50 ? ' (showing first 50)' : ''}
-                        </div>
+              </div>
                         {suggestions.map((influencer) => (
                           <div
                             key={influencer.id}

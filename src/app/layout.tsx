@@ -3,8 +3,13 @@ import './globals.css'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 
 export const metadata: Metadata = {
-  title: 'SwayKart',
-  description: 'Your modern e-commerce platform',
+  title: 'SwayKart - Impact Marketing Platform',
+  description: 'Discover the right creators, launch campaigns faster, and watch your brand grow with clarity. Our AI-driven platform takes the guesswork out of influencer marketing. Over 20,000+ Influencers from India.',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
