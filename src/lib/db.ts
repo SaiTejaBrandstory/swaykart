@@ -16,12 +16,11 @@ function getPoolConfig() {
       database: process.env.DB_NAME || 'swaykart',
       user: process.env.DB_USER || 'saiteja',
       password: process.env.DB_PASSWORD || 'Swaykart@123',
-      // SSL configuration - always allow self-signed certs
-      ssl: {
-        rejectUnauthorized: false, // Accept self-signed certs
-        require: true
-      },
     }),
+    // SSL configuration - explicitly allow self-signed certs
+    ssl: {
+      rejectUnauthorized: false, // 👈 allows self-signed certs
+    },
     // Vercel-optimized settings for serverless
     max: 1, // Single connection for serverless
     min: 0, // No minimum connections
