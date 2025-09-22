@@ -16,8 +16,11 @@ function getPoolConfig() {
       database: process.env.DB_NAME || 'swaykart',
       user: process.env.DB_USER || 'saiteja',
       password: process.env.DB_PASSWORD || 'Swaykart@123',
-      // Always use SSL for AWS RDS
-      ssl: {
+      // SSL configuration - permissive for Vercel serverless
+      ssl: isVercel ? {
+        rejectUnauthorized: false, // Accept self-signed certs for Vercel
+        require: true
+      } : {
         rejectUnauthorized: false,
         require: true
       },
