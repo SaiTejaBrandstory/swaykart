@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import { getClient } from '@/lib/db';
 import { PoolClient } from 'pg';
 
 // Retry function for database operations
@@ -32,9 +32,9 @@ export async function GET() {
     console.log('🚀 Fetching fresh influencer data...');
     const startTime = Date.now();
 
-    // Use retry logic for database connection
+    // Use lazy connection with retry logic
     client = await withRetry(async () => {
-      const conn = await pool.connect();
+      const conn = await getClient();
       console.log('✅ Database connected successfully');
       return conn;
     });
