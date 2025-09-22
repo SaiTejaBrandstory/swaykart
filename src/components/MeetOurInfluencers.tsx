@@ -1,11 +1,25 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+
+interface Influencer {
+  id: number;
+  username: string;
+  followers_count: number;
+  verified: boolean;
+  categories_combined: string;
+  engagement_rate: number;
+  credibility_score: number;
+}
 
 const MeetOurInfluencers = () => {
   const [searchQuery, setSearchQuery] = useState('')
+  const [suggestions, setSuggestions] = useState<Influencer[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [allInfluencers, setAllInfluencers] = useState<Influencer[]>([])
+  const [isSearching, setIsSearching] = useState(false)
 
-  // Sample influencer data - you can replace with actual data
-  const influencers = [
+  // Sample influencer data for the scrolling animation
+  const sampleInfluencers = [
     { id: 1, name: 'Influencer 1', image: '/images/home/influencers/influencers-1.png', verified: true },
     { id: 2, name: 'Influencer 2', image: '/images/home/influencers/influencers-2.png', verified: false },
     { id: 3, name: 'Influencer 3', image: '/images/home/influencers/influencers-3.png', verified: true },
@@ -24,9 +38,96 @@ const MeetOurInfluencers = () => {
     { id: 16, name: 'Influencer 16', image: '/images/home/influencers/influencers-16.png', verified: false }
   ]
 
-  const handleSearch = () => {
-    // Handle search functionality
-    console.log('Searching for:', searchQuery)
+  // Fetch all influencers on component mount
+  useEffect(() => {
+    const fetchInfluencers = async () => {
+      try {
+        const response = await fetch('/api/influencers')
+        const data = await response.json()
+        if (data.data) {
+          setAllInfluencers(data.data)
+        }
+      } catch (error) {
+        console.error('Error fetching influencers:', error)
+      }
+    }
+    fetchInfluencers()
+  }, [])
+
+  // Debounced search function
+  const debouncedSearch = React.useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout
+      return (query: string) => {
+        clearTimeout(timeoutId)
+        timeoutId = setTimeout(() => {
+          if (query.trim().length >= 2) {
+            setIsSearching(true)
+            
+            // Use a more efficient search with early termination
+            const queryLower = query.toLowerCase()
+            const filtered = allInfluencers.filter(influencer => {
+              const username = influencer.username?.toLowerCase() || ''
+              const categories = influencer.categories_combined?.toLowerCase() || ''
+              
+              return username.includes(queryLower) || categories.includes(queryLower)
+            }).slice(0, 50) // Limit to first 50 results for better performance
+            
+            console.log('Search query:', query)
+            console.log('Total influencers:', allInfluencers.length)
+            console.log('Filtered suggestions:', filtered.length)
+            
+            setSuggestions(filtered)
+            setShowSuggestions(true)
+            setIsSearching(false)
+          } else {
+            setSuggestions([])
+            setShowSuggestions(false)
+            setIsSearching(false)
+          }
+        }, 300) // 300ms debounce delay
+      }
+    })(),
+    [allInfluencers]
+  )
+
+  // Handle search input changes with debounced search
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value
+    setSearchQuery(query)
+    debouncedSearch(query)
+  }
+
+  const handleSuggestionClick = (influencer: Influencer) => {
+    console.log('Clicked on influencer:', influencer.username)
+    console.log('Navigation URL:', `/influencer/${influencer.username}`)
+    setSearchQuery(influencer.username)
+    setShowSuggestions(false)
+    
+    // Try multiple navigation methods
+    try {
+      // Method 1: Direct window location
+      window.location.href = `/influencer/${influencer.username}`
+      console.log('Navigation attempted with window.location.href')
+    } catch (error) {
+      console.error('Navigation error:', error)
+      // Method 2: Using window.open as fallback
+      window.open(`/influencer/${influencer.username}`, '_self')
+    }
+  }
+
+  const handleInputFocus = () => {
+    if (searchQuery.trim().length >= 2) {
+      setShowSuggestions(true)
+    }
+  }
+
+  const handleInputBlur = () => {
+    // Delay hiding suggestions to allow clicks
+    setTimeout(() => {
+      console.log('Hiding suggestions due to blur')
+      setShowSuggestions(false)
+    }, 300)
   }
 
   return (
@@ -53,7 +154,7 @@ const MeetOurInfluencers = () => {
                 animation: 'scroll-left 20s linear infinite',
                 width: 'max-content'
               }}>
-                {[...influencers.slice(0, 4), ...influencers.slice(0, 4), ...influencers.slice(0, 4), ...influencers.slice(0, 4)].map((influencer, index) => (
+                {[...sampleInfluencers.slice(0, 4), ...sampleInfluencers.slice(0, 4), ...sampleInfluencers.slice(0, 4), ...sampleInfluencers.slice(0, 4)].map((influencer, index) => (
                   <div key={`row1-${index}`} className="flex-shrink-0 mx-1">
                     <div 
                       className="relative overflow-hidden rounded-2xl shadow-lg w-[5rem] h-[5rem] sm:w-[6rem] sm:h-[6rem] md:w-[7rem] md:h-[7rem] lg:w-[9rem] lg:h-[9rem] hover:scale-105 transition-transform duration-300"
@@ -77,7 +178,7 @@ const MeetOurInfluencers = () => {
                 animation: 'scroll-right 20s linear infinite',
                 width: 'max-content'
               }}>
-                {[...influencers.slice(4, 8), ...influencers.slice(4, 8), ...influencers.slice(4, 8), ...influencers.slice(4, 8)].map((influencer, index) => (
+                {[...sampleInfluencers.slice(4, 8), ...sampleInfluencers.slice(4, 8), ...sampleInfluencers.slice(4, 8), ...sampleInfluencers.slice(4, 8)].map((influencer, index) => (
                   <div key={`row2-${index}`} className="flex-shrink-0 mx-1">
                     <div 
                       className="relative overflow-hidden rounded-2xl shadow-lg w-[5rem] h-[5rem] sm:w-[6rem] sm:h-[6rem] md:w-[7rem] md:h-[7rem] lg:w-[9rem] lg:h-[9rem] hover:scale-105 transition-transform duration-300"
@@ -101,7 +202,7 @@ const MeetOurInfluencers = () => {
                 animation: 'scroll-left 20s linear infinite',
                 width: 'max-content'
               }}>
-                {[...influencers.slice(8, 12), ...influencers.slice(8, 12), ...influencers.slice(8, 12), ...influencers.slice(8, 12)].map((influencer, index) => (
+                {[...sampleInfluencers.slice(8, 12), ...sampleInfluencers.slice(8, 12), ...sampleInfluencers.slice(8, 12), ...sampleInfluencers.slice(8, 12)].map((influencer, index) => (
                   <div key={`row3-${index}`} className="flex-shrink-0 mx-1">
                     <div 
                       className="relative overflow-hidden rounded-2xl shadow-lg w-[5rem] h-[5rem] sm:w-[6rem] sm:h-[6rem] md:w-[7rem] md:h-[7rem] lg:w-[9rem] lg:h-[9rem] hover:scale-105 transition-transform duration-300"
@@ -125,7 +226,7 @@ const MeetOurInfluencers = () => {
                 animation: 'scroll-right 20s linear infinite',
                 width: 'max-content'
               }}>
-                {[...influencers.slice(12, 16), ...influencers.slice(12, 16), ...influencers.slice(12, 16), ...influencers.slice(12, 16)].map((influencer, index) => (
+                {[...sampleInfluencers.slice(12, 16), ...sampleInfluencers.slice(12, 16), ...sampleInfluencers.slice(12, 16), ...sampleInfluencers.slice(12, 16)].map((influencer, index) => (
                   <div key={`row4-${index}`} className="flex-shrink-0 mx-1">
                     <div 
                       className="relative overflow-hidden rounded-2xl shadow-lg w-[5rem] h-[5rem] sm:w-[6rem] sm:h-[6rem] md:w-[7rem] md:h-[7rem] lg:w-[9rem] lg:h-[9rem] hover:scale-105 transition-transform duration-300"
@@ -148,7 +249,6 @@ const MeetOurInfluencers = () => {
 
                      {/* Right Section - Search and CTA */}
            <div className="relative p-8 lg:p-12 rounded-3xl">
-
                          {/* 10000 Image */}
              <div className="flex justify-center mb-6">
                <img
@@ -204,46 +304,102 @@ const MeetOurInfluencers = () => {
 
             {/* Search Section */}
             <div className="space-y-4">
-              {/* Search Input */}
+              {/* Search Input with Suggestions */}
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-                                 <input
-                   type="text"
-                   placeholder="Search influencers"
-                   value={searchQuery}
-                   onChange={(e) => setSearchQuery(e.target.value)}
-                   className="w-full pl-12 pr-4 py-4 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                   style={{ 
-                     fontSize: 'clamp(14px, 2.5vw, 18px)',
-                     backgroundColor: '#FFFFFF',
-                     border: '1px solid #E5E7EB'
-                   }}
-                 />
-              </div>
-
-                             {/* Search Button */}
-               <div className="flex justify-center">
-                 <button
-                   onClick={handleSearch}
-                   className="py-4 px-6 hover:opacity-90 transition-opacity duration-200"
-                   style={{ 
-                     borderRadius: '6px',
-                     fontFamily: 'Inter',
-                     fontWeight: 600,
-                     fontSize: 'clamp(14px, 2.5vw, 18px)',
-                     lineHeight: '100%',
-                     letterSpacing: '0%',
-                     textAlign: 'center',
-                     color: '#FFFFFF',
-                     backgroundColor: '#FCA311'
-                   }}
-                 >
-                   Search Influencer
-                 </button>
+                <input
+                  type="text"
+                  placeholder={isSearching ? "Searching..." : "Search influencers"}
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onFocus={handleInputFocus}
+                  onBlur={handleInputBlur}
+                  disabled={isSearching}
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none disabled:opacity-50"
+                  style={{ 
+                    fontSize: 'clamp(14px, 2.5vw, 18px)',
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid #E5E7EB'
+                  }}
+                />
+                
+                {/* Suggestions Dropdown */}
+                {showSuggestions && (
+                  <div 
+                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-50"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {isSearching ? (
+                      <div className="p-4 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500"></div>
+                          <span className="text-gray-600">Searching...</span>
+                        </div>
+                      </div>
+                    ) : suggestions.length > 0 ? (
+                      <>
+                        <div className="p-2 text-sm text-gray-600 border-b border-gray-100">
+                          Showing {suggestions.length} results{suggestions.length === 50 ? ' (showing first 50)' : ''}
+                        </div>
+                        {suggestions.map((influencer) => (
+                          <div
+                            key={influencer.id}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              console.log('Div clicked for:', influencer.username)
+                              handleSuggestionClick(influencer)
+                            }}
+                            onMouseDown={(e) => {
+                              e.preventDefault()
+                              console.log('Mouse down on:', influencer.username)
+                            }}
+                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors duration-150"
+                            style={{ userSelect: 'none' }}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span className="text-orange-600 font-bold text-sm">
+                                  {influencer.username.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center space-x-2">
+                                  <span className="font-medium text-gray-900 truncate">
+                                    {influencer.username}
+                                  </span>
+                                  {influencer.verified && (
+                                    <svg className="w-4 h-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                  )}
+                                </div>
+                                <p className="text-sm text-gray-500 truncate">
+                                  {influencer.followers_count?.toLocaleString()} followers
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <div className="p-8 text-center">
+                        <div className="text-gray-400 mb-2">
+                          <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
+                        </div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">No influencers found</h3>
+                        <p className="text-gray-600">Try searching with different keywords or check the spelling.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
                </div>
              </div>
            </div>
