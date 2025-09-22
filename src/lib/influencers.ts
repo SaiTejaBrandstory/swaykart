@@ -1,4 +1,4 @@
-import pool from './db';
+import { getClient } from './db';
 
 export interface Influencer {
   id: number;
@@ -15,7 +15,7 @@ export interface Influencer {
 
 export async function getInfluencers(): Promise<Influencer[]> {
   try {
-    const client = await pool.connect();
+    const client = await getClient();
     const result = await client.query('SELECT * FROM scrapped.influencer_ui ORDER BY followers DESC');
     client.release();
     return result.rows;
@@ -27,7 +27,7 @@ export async function getInfluencers(): Promise<Influencer[]> {
 
 export async function getInfluencerById(id: number): Promise<Influencer | null> {
   try {
-    const client = await pool.connect();
+    const client = await getClient();
     const result = await client.query('SELECT * FROM scrapped.influencer_ui WHERE id = $1', [id]);
     client.release();
     return result.rows[0] || null;
