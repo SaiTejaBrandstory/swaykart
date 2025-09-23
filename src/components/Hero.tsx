@@ -83,10 +83,11 @@ const Hero = () => {
             </p>
           </div>
           
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 mb-6">
-            <button
-              className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg transition-colors duration-200 h-12 sm:h-14"
+          {/* CTA Button */}
+          <div className="flex justify-center mt-8 mb-6">
+            <a
+              href="#contact-us"
+              className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg transition-all duration-200 h-12 sm:h-14 hover:shadow-lg"
               style={{
                 background: 'rgba(252, 163, 17, 1)',
                 fontFamily: 'Inter, sans-serif',
@@ -95,25 +96,23 @@ const Hero = () => {
                 lineHeight: '100%',
                 textAlign: 'center',
                 color: '#FFFFFF',
-                border: '1px solid rgba(252, 163, 17, 1)'
+                border: '1px solid rgba(252, 163, 17, 1)',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(230, 147, 15, 1)'
+                e.currentTarget.style.borderColor = 'rgba(230, 147, 15, 1)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(252, 163, 17, 1)'
+                e.currentTarget.style.borderColor = 'rgba(252, 163, 17, 1)'
               }}
             >
-              Start Free Trial
-            </button>
-            <button
-              className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg transition-colors duration-200 h-12 sm:h-14 flex items-center justify-center"
-              style={{
-                backgroundColor: '#ffffff',
-                border: '2px solid rgba(20, 33, 61, 1)',
-                fontFamily: 'Inter, sans-serif',
-                fontWeight: 600,
-                fontSize: 'clamp(16px, 4vw, 18px)',
-                textAlign: 'center',
-                color: '#14213D'
-              }}
-            >
-              See How It Works
-            </button>
+              Contact Us
+            </a>
           </div>
           
           {/* Social Proof */}

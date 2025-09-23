@@ -7,7 +7,7 @@ const CreatorFeatures = () => {
     <section>
       {/* Main Heading */}
       <div className="px-4 sm:px-6 lg:px-12 xl:px-16 pb-16">
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 mt-10">
           <h2 style={{
             fontFamily: 'Inter',
             fontWeight: 700,
@@ -62,11 +62,12 @@ const CreatorFeatures = () => {
                   From nano to mega Influencers, Connect with brands across all industries, AI driven matching, direct brand contact, and control over your contract terms, fast, fun, and flexible.
                 </p>
               </div>
-              <div className="lg:w-5/12 h-full mx-auto">
+              <div className="h-full mx-auto">
                 <img 
                   src="/images/influencers/iphone-2.png" 
                   alt="iPhone Interface" 
-                  className="w-full h-full object-cover"
+                  className="h-full object-cover"
+                  style={{ padding: '30px 30px 0 30px', width: '350px' }}
                 />
               </div>
             </div>
@@ -118,11 +119,12 @@ const CreatorFeatures = () => {
             <div className="lg:w-7/12 rounded-2xl overflow-hidden flex flex-col lg:flex-row hover:shadow-lg transition-shadow duration-300" style={{
               background: 'linear-gradient(90deg, #FACC15 0%, #FCA311 100%)'
             }}>
-              <div className="lg:w-5/12 h-full mx-auto">
+              <div className="h-full mx-auto">
                 <img 
                   src="/images/influencers/iphone-3.png" 
                   alt="iPhone Interface" 
-                  className="w-full h-full object-cover"
+                  className="h-full object-cover"
+                  style={{ padding: '30px 30px 0 30px', width: '350px' }}
                 />
               </div>
               <div className="p-8 lg:w-7/12 flex flex-col justify-center">
@@ -672,13 +674,22 @@ const CreatorFeatures = () => {
           {/* Download Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             {/* Google Play Button */}
-            <button 
-              className="flex items-center text-white rounded-lg hover:opacity-90 transition-opacity"
+            <a 
+              href="https://play.google.com/store/apps/details?id=com.swaykart.app&pcampaignid=web_share"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center text-white rounded-lg transition-all duration-200 hover:shadow-lg"
               style={{ 
                 backgroundColor: '#FCA311',
                 minWidth: 'clamp(140px, 20vw, 180px)',
                 minHeight: 'clamp(40px, 6vw, 56px)',
                 padding: 'clamp(8px, 1.5vw, 16px) clamp(16px, 2.5vw, 24px)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#E6930F'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#FCA311'
               }}
             >
               <svg className="mr-3" viewBox="0 0 24 24" fill="currentColor" style={{ width: 'clamp(20px, 3vw, 24px)', height: 'clamp(20px, 3vw, 24px)' }}>
@@ -688,7 +699,7 @@ const CreatorFeatures = () => {
                 <div style={{ fontSize: 'clamp(14px, 2vw, 16px)', lineHeight: 'clamp(16px, 2.5vw, 18px)' }}>Get it on</div>
                 <div style={{ fontSize: 'clamp(14px, 2.5vw, 18px)', fontWeight: 600, lineHeight: 'clamp(16px, 3vw, 20px)' }}>Google Play</div>
               </div>
-            </button>
+            </a>
             
             {/* App Store Button */}
             <button 

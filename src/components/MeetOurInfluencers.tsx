@@ -17,6 +17,7 @@ const MeetOurInfluencers = () => {
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [allInfluencers, setAllInfluencers] = useState<Influencer[]>([])
   const [isSearching, setIsSearching] = useState(false)
+  const [noMatchFound, setNoMatchFound] = useState(false)
 
   // Sample influencer data for the scrolling animation
   const sampleInfluencers = [
@@ -95,24 +96,52 @@ const MeetOurInfluencers = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value
     setSearchQuery(query)
+    setNoMatchFound(false) // Reset no match found state when typing
     debouncedSearch(query)
   }
 
   const handleSuggestionClick = (influencer: Influencer) => {
-    console.log('Clicked on influencer:', influencer.username)
-    console.log('Navigation URL:', `/influencer/${influencer.username}`)
+    console.log('Selected influencer:', influencer.username)
     setSearchQuery(influencer.username)
     setShowSuggestions(false)
+    setNoMatchFound(false) // Reset no match found state when selecting suggestion
+    // No navigation here - just select the influencer
+  }
+
+  const handleNavigateToSelectedInfluencer = () => {
+    if (!searchQuery.trim()) return
     
-    // Try multiple navigation methods
-    try {
-      // Method 1: Direct window location
-      window.location.href = `/influencer/${influencer.username}`
-      console.log('Navigation attempted with window.location.href')
-    } catch (error) {
-      console.error('Navigation error:', error)
-      // Method 2: Using window.open as fallback
-      window.open(`/influencer/${influencer.username}`, '_self')
+    // Find the exact influencer that matches the search query
+    const exactMatch = allInfluencers.find(influencer => 
+      influencer.username.toLowerCase() === searchQuery.toLowerCase()
+    )
+    
+    if (exactMatch) {
+      console.log('Navigating to influencer:', exactMatch.username)
+      window.location.href = `/influencer/${exactMatch.username}`
+    }
+  }
+
+  const handleSearchButtonClick = () => {
+    if (!searchQuery.trim()) return
+    
+    // Check if there are any suggestions available for this search query
+    const queryLower = searchQuery.toLowerCase()
+    const availableSuggestions = allInfluencers.filter(influencer => {
+      const username = influencer.username?.toLowerCase() || ''
+      const categories = influencer.categories_combined?.toLowerCase() || ''
+      return username.includes(queryLower) || categories.includes(queryLower)
+    })
+    
+    if (availableSuggestions.length > 0) {
+      // There are suggestions available, user should select from dropdown
+      setShowSuggestions(true)
+      console.log('Suggestions available, user should select from dropdown')
+    } else {
+      // No suggestions available, show no match found
+      console.log('No match found for:', searchQuery)
+      setNoMatchFound(true)
+      setShowSuggestions(false)
     }
   }
 
@@ -328,7 +357,7 @@ const MeetOurInfluencers = () => {
                  />
                 
                 {/* Suggestions Dropdown */}
-                {showSuggestions && (
+                {showSuggestions && searchQuery.trim().length > 0 && (
                   <div 
                     className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-50"
                     onMouseDown={(e) => e.preventDefault()}
@@ -401,6 +430,53 @@ const MeetOurInfluencers = () => {
                   </div>
                 )}
                </div>
+              
+              {/* Search Button */}
+              <div className="flex flex-col items-center space-y-3">
+                <button
+                  onClick={noMatchFound ? handleSearchButtonClick : handleNavigateToSelectedInfluencer}
+                  disabled={isSearching || !searchQuery.trim()}
+                  className="px-8 py-3 rounded-xl font-semibold text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: noMatchFound ? '#DC2626' : '#FCA311',
+                    fontSize: 'clamp(14px, 2.5vw, 18px)',
+                    boxShadow: noMatchFound ? '0 4px 15px rgba(220, 38, 38, 0.3)' : '0 4px 15px rgba(252, 163, 17, 0.3)'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSearching && !noMatchFound) {
+                      e.currentTarget.style.backgroundColor = '#E6930F' // Darker orange on hover
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSearching && !noMatchFound) {
+                      e.currentTarget.style.backgroundColor = '#FCA311' // Back to original orange
+                    }
+                  }}
+                >
+                  {isSearching ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Searching...</span>
+                    </div>
+                  ) : noMatchFound ? (
+                    'No Influencer Found'
+                  ) : (
+                    'Go to Influencer'
+                  )}
+                </button>
+                
+                {noMatchFound && (
+                  <p className="text-red-600 text-sm text-center">
+                    No influencer found with the name "{searchQuery}". Please try a different search term.
+                  </p>
+                )}
+                
+                {searchQuery.trim() && !noMatchFound && suggestions.length === 0 && (
+                  <p className="text-gray-600 text-sm text-center">
+                    Type at least 2 characters to see suggestions, then select an influencer to visit their page.
+                  </p>
+                )}
+              </div>
              </div>
            </div>
          </div>

@@ -83,8 +83,11 @@ const InfluencersHero = (): JSX.Element => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 mb-6">
-            <button
-              className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+            <a
+              href="https://play.google.com/store/apps/details?id=com.swaykart.app&pcampaignid=web_share"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-lg"
               style={{
                 background: 'rgba(252, 163, 17, 1)',
                 fontFamily: 'Inter, sans-serif',
@@ -97,12 +100,20 @@ const InfluencersHero = (): JSX.Element => {
                 minHeight: 'clamp(40px, 6vw, 56px)',
                 padding: 'clamp(8px, 1.5vw, 16px) clamp(16px, 3vw, 32px)'
               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(230, 147, 15, 1)'
+                e.currentTarget.style.borderColor = 'rgba(230, 147, 15, 1)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(252, 163, 17, 1)'
+                e.currentTarget.style.borderColor = 'rgba(252, 163, 17, 1)'
+              }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 30 30" style={{ width: 'clamp(18px, 3vw, 20px)', height: 'clamp(18px, 3vw, 20px)' }}>
                 <path fill="#FFFFFF" d="M 7.6230469 3.2109375 L 18 13.585938 L 20.677734 10.908203 C 17.018734 8.6882031 12.118063 5.7100938 9.9140625 4.3710938 L 8.4375 3.4765625 C 8.1765 3.3175625 7.8970469 3.2319375 7.6230469 3.2109375 z M 6.0390625 4.453125 C 6.0180625 4.567125 6 4.6816875 6 4.8046875 L 6 25.308594 C 6 25.394594 6.0172969 25.474641 6.0292969 25.556641 L 16.585938 15 L 6.0390625 4.453125 z M 22.4375 11.976562 L 19.414062 15 L 22.384766 17.970703 C 23.958766 17.016703 25.048922 16.35425 25.169922 16.28125 C 25.704922 15.95425 26.007047 15.460875 25.998047 14.921875 C 25.990047 14.392875 25.687828 13.919906 25.173828 13.628906 C 25.058828 13.562906 23.9835 12.913563 22.4375 11.976562 z M 18 16.414062 L 7.6542969 26.759766 C 7.8552969 26.724766 8.0560469 26.664828 8.2480469 26.548828 C 8.5140469 26.386828 15.7 22.027062 20.625 19.039062 L 18 16.414062 z"></path>
               </svg>
               Get it on Google Play
-            </button>
+            </a>
             <button
               className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
               style={{
@@ -145,7 +156,7 @@ const InfluencersHero = (): JSX.Element => {
                 position: 'absolute',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                width: 'clamp(280px, 30vw, 450px)',
+                width: 'clamp(280px, 30vw, 350px)',
                 height: 'clamp(220px, 25vw, 350px)',
                 display: 'flex',
                 justifyContent: 'center',
@@ -160,7 +171,7 @@ const InfluencersHero = (): JSX.Element => {
                     width: '100%',
                     height: 'auto',
                     transform: 'translateY(0%)',
-                    maxWidth: '450px'
+                    maxWidth: '350px'
                   }}
                 />
               </div>

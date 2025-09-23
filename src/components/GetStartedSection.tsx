@@ -23,7 +23,7 @@ const GetStartedSection = () => {
   }
 
   return (
-    <section className="py-20 lg:py-24" style={{ background: 'linear-gradient(90deg, #14213D 0%, #1E3A8A 100%)' }}>
+    <section id="contact-us" className="py-20 lg:py-24" style={{ background: 'linear-gradient(90deg, #14213D 0%, #1E3A8A 100%)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl overflow-hidden shadow-2xl">
           <div className="grid lg:grid-cols-2 min-h-[500px]">
@@ -54,32 +54,6 @@ const GetStartedSection = () => {
                  Join 2,000+ brands using Swaykart to discover creators, run campaigns, and measure results with complete clarity.
                </p>
 
-               <button className="mb-4 px-8 py-4 rounded-lg transition-colors duration-200" style={{
-                 fontFamily: 'Inter',
-                 fontWeight: 600,
-                 fontSize: 'clamp(14px, 2.5vw, 16px)',
-                 lineHeight: '100%',
-                 letterSpacing: '0%',
-                 textAlign: 'center',
-                 color: '#FFFFFF',
-                 backgroundColor: '#FCA311',
-                 border: 'none',
-                 width: 'fit-content'
-               }}>
-                 Start Free Trial
-               </button>
-
-               <p style={{
-                 fontFamily: 'Inter',
-                 fontWeight: 400,
-                 fontSize: 'clamp(14px, 2vw, 16px)',
-                 lineHeight: 'clamp(16px, 3vw, 20px)',
-                 letterSpacing: '0%',
-                 textAlign: 'center',
-                 color: '#6B7280'
-               }}>
-                 No credit card required. 14-day free trial.
-               </p>
             </div>
 
             {/* Right Section - Signup Form */}

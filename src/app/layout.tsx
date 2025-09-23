@@ -6,9 +6,9 @@ export const metadata: Metadata = {
   title: 'SwayKart - Impact Marketing Platform',
   description: 'Discover the right creators, launch campaigns faster, and watch your brand grow with clarity. Our AI-driven platform takes the guesswork out of influencer marketing. Over 20,000+ Influencers from India.',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: '/images/logo/logo.webp',
+    shortcut: '/images/logo/logo.webp',
+    apple: '/images/logo/logo.webp',
   },
 }
 
