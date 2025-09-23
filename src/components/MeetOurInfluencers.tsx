@@ -18,6 +18,7 @@ const MeetOurInfluencers = () => {
   const [allInfluencers, setAllInfluencers] = useState<Influencer[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [noMatchFound, setNoMatchFound] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   // Sample influencer data for the scrolling animation
   const sampleInfluencers = [
@@ -39,23 +40,49 @@ const MeetOurInfluencers = () => {
     { id: 16, name: 'Influencer 16', image: '/images/home/influencers/influencers-16.png', verified: false }
   ]
 
-  // Fetch all influencers on component mount
+  // Fetch influencers with optimizations
   useEffect(() => {
     const fetchInfluencers = async () => {
       try {
-        const response = await fetch('/api/influencers')
+        // Use AbortController for cancellation
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 5000) // 5s timeout
+        
+        const response = await fetch('/api/influencers', {
+          signal: controller.signal,
+          headers: {
+            'Cache-Control': 'max-age=300', // 5 minutes cache
+          }
+        })
+        
+        clearTimeout(timeoutId)
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
         const data = await response.json()
         if (data.data) {
           setAllInfluencers(data.data)
         }
       } catch (error) {
-        console.error('Error fetching influencers:', error)
+        if (error.name !== 'AbortError') {
+          console.error('Error fetching influencers:', error)
+        }
+      } finally {
+        setIsLoading(false)
       }
     }
-    fetchInfluencers()
-  }, [])
+    
+    // Only fetch if we don't have data yet
+    if (allInfluencers.length === 0) {
+      fetchInfluencers()
+    } else {
+      setIsLoading(false)
+    }
+  }, [allInfluencers.length])
 
-  // Debounced search function
+  // Optimized debounced search function
   const debouncedSearch = React.useCallback(
     (() => {
       let timeoutId: NodeJS.Timeout
@@ -65,28 +92,37 @@ const MeetOurInfluencers = () => {
           if (query.trim().length >= 2) {
             setIsSearching(true)
             
-            // Use a more efficient search with early termination
-            const queryLower = query.toLowerCase()
-            const filtered = allInfluencers.filter(influencer => {
-              const username = influencer.username?.toLowerCase() || ''
-              const categories = influencer.categories_combined?.toLowerCase() || ''
+            // Use requestAnimationFrame for smooth UI updates
+            requestAnimationFrame(() => {
+              const queryLower = query.toLowerCase()
               
-              return username.includes(queryLower) || categories.includes(queryLower)
-            }).slice(0, 50) // Limit to first 50 results for better performance
-            
-            console.log('Search query:', query)
-            console.log('Total influencers:', allInfluencers.length)
-            console.log('Filtered suggestions:', filtered.length)
-            
-            setSuggestions(filtered)
-            setShowSuggestions(true)
-            setIsSearching(false)
+              // Optimized search with early termination and indexing
+              const filtered = []
+              const maxResults = 20 // Reduced from 50 for faster performance
+              
+              for (let i = 0; i < allInfluencers.length && filtered.length < maxResults; i++) {
+                const influencer = allInfluencers[i]
+                const username = influencer.username?.toLowerCase() || ''
+                const categories = influencer.categories_combined?.toLowerCase() || ''
+                
+                // Check username first (most common search)
+                if (username.includes(queryLower)) {
+                  filtered.push(influencer)
+                } else if (categories.includes(queryLower)) {
+                  filtered.push(influencer)
+                }
+              }
+              
+              setSuggestions(filtered)
+              setShowSuggestions(true)
+              setIsSearching(false)
+            })
           } else {
             setSuggestions([])
             setShowSuggestions(false)
             setIsSearching(false)
           }
-        }, 300) // 300ms debounce delay
+        }, 200) // Reduced debounce delay from 300ms to 200ms
       }
     })(),
     [allInfluencers]
@@ -125,28 +161,34 @@ const MeetOurInfluencers = () => {
   const handleSearchButtonClick = () => {
     if (!searchQuery.trim()) return
     
-    // Check if there are any suggestions available for this search query
+    // Optimized search with early termination
     const queryLower = searchQuery.toLowerCase()
-    const availableSuggestions = allInfluencers.filter(influencer => {
+    let foundMatch = false
+    
+    for (let i = 0; i < allInfluencers.length; i++) {
+      const influencer = allInfluencers[i]
       const username = influencer.username?.toLowerCase() || ''
       const categories = influencer.categories_combined?.toLowerCase() || ''
-      return username.includes(queryLower) || categories.includes(queryLower)
-    })
+      
+      if (username.includes(queryLower) || categories.includes(queryLower)) {
+        foundMatch = true
+        break
+      }
+    }
     
-    if (availableSuggestions.length > 0) {
+    if (foundMatch) {
       // There are suggestions available, user should select from dropdown
       setShowSuggestions(true)
-      console.log('Suggestions available, user should select from dropdown')
+      setNoMatchFound(false)
     } else {
       // No suggestions available, show no match found
-      console.log('No match found for:', searchQuery)
       setNoMatchFound(true)
       setShowSuggestions(false)
     }
   }
 
   const handleInputFocus = () => {
-    if (searchQuery.trim().length >= 2) {
+    if (searchQuery.trim().length >= 2 && suggestions.length > 0) {
       setShowSuggestions(true)
     }
   }
@@ -340,24 +382,24 @@ const MeetOurInfluencers = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-                                 <input
-                   type="text"
-                  placeholder={isSearching ? "Searching..." : "Search influencers"}
-                   value={searchQuery}
+                <input
+                  type="text"
+                  placeholder={isLoading ? "Loading influencers..." : isSearching ? "Searching..." : "Search influencers"}
+                  value={searchQuery}
                   onChange={handleSearchChange}
                   onFocus={handleInputFocus}
                   onBlur={handleInputBlur}
-                  disabled={isSearching}
+                  disabled={isSearching || isLoading}
                   className="w-full pl-12 pr-4 py-4 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none disabled:opacity-50"
-                   style={{ 
-                     fontSize: 'clamp(14px, 2.5vw, 18px)',
-                     backgroundColor: '#FFFFFF',
-                     border: '1px solid #E5E7EB'
-                   }}
-                 />
+                  style={{ 
+                    fontSize: 'clamp(14px, 2.5vw, 18px)',
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid #E5E7EB'
+                  }}
+                />
                 
                 {/* Suggestions Dropdown */}
-                {showSuggestions && searchQuery.trim().length > 0 && (
+                {showSuggestions && searchQuery.trim().length >= 2 && (
                   <div 
                     className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-50"
                     onMouseDown={(e) => e.preventDefault()}
@@ -435,7 +477,7 @@ const MeetOurInfluencers = () => {
               <div className="flex flex-col items-center space-y-3">
                 <button
                   onClick={noMatchFound ? handleSearchButtonClick : handleNavigateToSelectedInfluencer}
-                  disabled={isSearching || !searchQuery.trim()}
+                  disabled={isSearching || isLoading || !searchQuery.trim()}
                   className="px-8 py-3 rounded-xl font-semibold text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{
                     backgroundColor: noMatchFound ? '#DC2626' : '#FCA311',
@@ -443,17 +485,22 @@ const MeetOurInfluencers = () => {
                     boxShadow: noMatchFound ? '0 4px 15px rgba(220, 38, 38, 0.3)' : '0 4px 15px rgba(252, 163, 17, 0.3)'
                   }}
                   onMouseEnter={(e) => {
-                    if (!isSearching && !noMatchFound) {
+                    if (!isSearching && !isLoading && !noMatchFound) {
                       e.currentTarget.style.backgroundColor = '#E6930F' // Darker orange on hover
                     }
                   }}
                   onMouseLeave={(e) => {
-                    if (!isSearching && !noMatchFound) {
+                    if (!isSearching && !isLoading && !noMatchFound) {
                       e.currentTarget.style.backgroundColor = '#FCA311' // Back to original orange
                     }
                   }}
                 >
-                  {isSearching ? (
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Loading...</span>
+                    </div>
+                  ) : isSearching ? (
                     <div className="flex items-center gap-2">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                       <span>Searching...</span>
@@ -461,7 +508,7 @@ const MeetOurInfluencers = () => {
                   ) : noMatchFound ? (
                     'No Influencer Found'
                   ) : (
-                    'Go to Influencer'
+                    'Search Influencer'
                   )}
                 </button>
                 
@@ -471,7 +518,7 @@ const MeetOurInfluencers = () => {
                   </p>
                 )}
                 
-                {searchQuery.trim() && !noMatchFound && suggestions.length === 0 && (
+                {searchQuery.trim().length === 1 && !noMatchFound && (
                   <p className="text-gray-600 text-sm text-center">
                     Type at least 2 characters to see suggestions, then select an influencer to visit their page.
                   </p>

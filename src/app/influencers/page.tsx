@@ -7,7 +7,7 @@ export default function InfluencersPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <main>
+      <main className="pt-16">
         <InfluencersHero />
         <CreatorFeatures />
       </main>

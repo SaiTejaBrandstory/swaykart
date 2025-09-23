@@ -82,12 +82,12 @@ const InfluencersHero = (): JSX.Element => {
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8 mb-6 w-full sm:w-auto">
             <a
               href="https://play.google.com/store/apps/details?id=com.swaykart.app&pcampaignid=web_share"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-lg"
+              className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-lg w-full sm:w-auto"
               style={{
                 background: 'rgba(252, 163, 17, 1)',
                 fontFamily: 'Inter, sans-serif',
@@ -98,7 +98,8 @@ const InfluencersHero = (): JSX.Element => {
                 color: '#FFFFFF',
                 border: '1px solid rgba(252, 163, 17, 1)',
                 minHeight: 'clamp(40px, 6vw, 56px)',
-                padding: 'clamp(8px, 1.5vw, 16px) clamp(16px, 3vw, 32px)'
+                padding: 'clamp(8px, 1.5vw, 16px) clamp(16px, 3vw, 32px)',
+                maxWidth: '60%'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'rgba(230, 147, 15, 1)'
@@ -115,7 +116,7 @@ const InfluencersHero = (): JSX.Element => {
               Get it on Google Play
             </a>
             <button
-              className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 w-full sm:w-auto"
               style={{
                 backgroundColor: '#ffffff',
                 border: '2px solid rgba(20, 33, 61, 1)',
@@ -125,7 +126,8 @@ const InfluencersHero = (): JSX.Element => {
                 textAlign: 'center',
                 color: '#14213D',
                 minHeight: 'clamp(40px, 6vw, 56px)',
-                padding: 'clamp(8px, 1.5vw, 16px) clamp(16px, 3vw, 32px)'
+                padding: 'clamp(8px, 1.5vw, 16px) clamp(16px, 3vw, 32px)',
+                maxWidth: '60%'
               }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 30 30" style={{ width: 'clamp(18px, 3vw, 20px)', height: 'clamp(18px, 3vw, 20px)' }}>

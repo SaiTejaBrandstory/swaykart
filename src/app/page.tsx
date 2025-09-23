@@ -7,23 +7,23 @@ import PartnerInGrowth from '@/components/PartnerInGrowth'
 import BuiltForBrands from '@/components/BuiltForBrands'
 import GetStartedSection from '@/components/GetStartedSection'
 import FAQSection from '@/components/FAQSection'
-import BlogSection from '@/components/BlogSection'
 import Footer from '@/components/Footer'
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <Hero />
-      <ProcessSection />
-      <FeaturesSection />
-      <MeetOurInfluencers />
-      <PartnerInGrowth />
-      <BuiltForBrands />
-      <GetStartedSection />
-      <FAQSection />
-      <BlogSection />
-      <Footer />
+      <div className="pt-16">
+        <Hero />
+        <ProcessSection />
+        <FeaturesSection />
+        <MeetOurInfluencers />
+        <PartnerInGrowth />
+        <BuiltForBrands />
+        <GetStartedSection />
+        <FAQSection />
+        <Footer />
+      </div>
     </div>
   )
 }

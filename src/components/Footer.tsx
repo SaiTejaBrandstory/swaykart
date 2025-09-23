@@ -69,10 +69,10 @@ const Footer = () => {
               Product
             </h3>
             <ul className="space-y-4">
-              {['Features', 'Pricing', 'Case Studies', 'Reviews', 'Updates'].map((item) => (
+              {['Features', 'Case Studies', 'Reviews', 'Updates'].map((item) => (
                 <li key={item}>
                   <a 
-                    href={item === 'Pricing' ? '/pricing' : '#'} 
+                    href="#" 
                     className="hover:text-orange-400 transition-colors duration-200"
                     style={{
                       fontFamily: 'Inter',

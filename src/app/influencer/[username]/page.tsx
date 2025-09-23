@@ -159,7 +159,7 @@ export default function InfluencerProfile() {
                           fontWeight: 400,
                           lineHeight: '20px',
                           letterSpacing: '0%'
-                        }}>{influencer.location || 'Location not specified'}</span>
+                        }}>{influencer.locations_combined || 'Location not specified'}</span>
                       </div>
                       <div className="flex items-center justify-center sm:justify-start gap-2" style={{ color: '#14213D' }}>
                         <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#14213D' }}>
@@ -230,8 +230,8 @@ export default function InfluencerProfile() {
               lineHeight: '26px',
               color: '#374151'
             }}>
-              {influencer.value_proposition || `Content creator in ${influencer.category} with ${influencer.followers_count?.toLocaleString()} followers. 
-              Specializing in ${influencer.categories_combined || influencer.category} content with ${influencer.engagement_rate}% engagement rate.`}
+              {influencer.value_proposition || `Content creator in ${influencer.categories_combined} with ${influencer.followers_count?.toLocaleString()} followers. 
+              Specializing in ${influencer.categories_combined} content with ${influencer.engagement_rate ? Number(influencer.engagement_rate).toFixed(2) : 'N/A'}% engagement rate.`}
             </p>
           </div>
         </div>
@@ -298,7 +298,7 @@ export default function InfluencerProfile() {
               <div className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2" style={{ 
                 fontFamily: 'Inter', 
                 color: '#EC4899' 
-              }}>{influencer.engagement_rate}%</div>
+              }}>{influencer.engagement_rate ? Number(influencer.engagement_rate).toFixed(2) : 'N/A'}%</div>
               <div className="text-base sm:text-lg mb-2" style={{ 
                 fontFamily: 'Inter', 
                 color: '#6B7280' 
@@ -332,16 +332,16 @@ export default function InfluencerProfile() {
               }}>Credibility</div>
             </div>
             
-            {/* Category */}
+            {/* Confidence Level */}
             <div className="text-center">
               <div className="text-2xl font-bold mb-1" style={{ 
                 fontFamily: 'Inter', 
-                color: '#14213D' 
-              }}>{influencer.category || 'N/A'}</div>
+                color: '#3B82F6' 
+              }}>{influencer.confidence_level || 'N/A'}</div>
               <div className="text-sm" style={{ 
                 fontFamily: 'Inter', 
                 color: '#6B7280' 
-              }}>Category</div>
+              }}>Confidence Level</div>
             </div>
             
             {/* Hashtag Diversity */}
@@ -492,7 +492,7 @@ export default function InfluencerProfile() {
                     </svg>
                   </div>
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">{influencer.engagement_rate || 'N/A'}%</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">{influencer.engagement_rate ? Number(influencer.engagement_rate).toFixed(2) : 'N/A'}%</div>
                 <div className="text-sm text-gray-600">Engagement Rate</div>
               </div>
 
@@ -530,12 +530,12 @@ export default function InfluencerProfile() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Category</span>
-                    <span className="font-medium">{influencer.category || 'N/A'}</span>
+                    <span className="text-gray-600">Categories</span>
+                    <span className="font-medium">{influencer.categories_combined || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Location</span>
-                    <span className="font-medium">{influencer.location || 'N/A'}</span>
+                    <span className="text-gray-600">Locations</span>
+                    <span className="font-medium">{influencer.locations_combined || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span className="text-gray-600">Verified</span>
@@ -632,7 +632,7 @@ export default function InfluencerProfile() {
                   </span>
                 )) : (
                   <span className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">
-                    {influencer.category || 'General'}
+                    General
                   </span>
                 )}
               </div>

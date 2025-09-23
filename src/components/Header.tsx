@@ -13,7 +13,7 @@ const Header = () => {
   }
 
   return (
-            <header className="bg-white shadow-sm">
+            <header className="bg-white/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -30,14 +30,14 @@ const Header = () => {
           {/* Navigation Menu */}
           <nav className="hidden md:flex items-center space-x-8">
             <a
-              href="#brands"
+              href="/"
               className={`transition-colors duration-200 font-medium ${
-                isActive('/brands') ? '' : 'text-black hover:text-blue-900'
+                isActive('/') ? '' : 'text-black hover:text-blue-900'
               }`}
               style={{
                 fontSize: 'clamp(14px, 2.5vw, 16px)',
                 lineHeight: 'clamp(20px, 3.5vw, 24px)',
-                color: isActive('/brands') ? '#FCA311' : undefined
+                color: isActive('/') ? '#FCA311' : undefined
               }}
             >
               Brands
@@ -68,59 +68,24 @@ const Header = () => {
             >
               Leaderboard
             </a>
-            <a
-              href="/pricing"
-              className={`transition-colors duration-200 font-medium ${
-                isActive('/pricing') ? '' : 'text-black hover:text-blue-900'
-              }`}
-              style={{
-                fontSize: 'clamp(14px, 2.5vw, 16px)',
-                lineHeight: 'clamp(20px, 3.5vw, 24px)',
-                color: isActive('/pricing') ? '#FCA311' : undefined
-              }}
-            >
-              Pricing
-            </a>
-            <a
-              href="#blog"
-              className={`transition-colors duration-200 font-medium ${
-                isActive('/blog') ? '' : 'text-black hover:text-blue-900'
-              }`}
-              style={{
-                fontSize: 'clamp(14px, 2.5vw, 16px)',
-                lineHeight: 'clamp(20px, 3.5vw, 24px)',
-                color: isActive('/blog') ? '#FCA311' : undefined
-              }}
-            >
-              Blog
-            </a>
           </nav>
 
-          {/* Action Buttons - Hidden on mobile */}
+          {/* Action Button - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-4">
-            <button 
-              className="px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
-              style={{
-                border: '1px solid rgba(20, 33, 61, 1)',
-                color: '#000000',
-                fontSize: 'clamp(14px, 2.5vw, 16px)',
-                lineHeight: 'clamp(20px, 3.5vw, 24px)'
-              }}
-            >
-              Login
-            </button>
-            <button 
-              className="px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
+            <a
+              href="/#contact-us"
+              className="px-6 py-2 rounded-lg transition-colors duration-200 font-medium hover:opacity-90"
               style={{
                 backgroundColor: 'rgba(252, 163, 17, 1)',
                 color: '#ffffff',
                 border: '1px solid rgba(252, 163, 17, 1)',
                 fontSize: 'clamp(14px, 2.5vw, 16px)',
-                lineHeight: 'clamp(20px, 3.5vw, 24px)'
+                lineHeight: 'clamp(20px, 3.5vw, 24px)',
+                textDecoration: 'none'
               }}
             >
-              Get Started
-            </button>
+              Contact Us
+            </a>
           </div>
 
           {/* Mobile menu button */}
@@ -155,14 +120,14 @@ const Header = () => {
         <div id="mobile-menu" className="hidden md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
             <a
-              href="#brands"
+              href="/"
               className={`block px-3 py-2 transition-colors duration-200 font-medium ${
-                isActive('/brands') ? '' : 'text-black hover:text-blue-900'
+                isActive('/') ? '' : 'text-black hover:text-blue-900'
               }`}
               style={{
                 fontSize: 'clamp(14px, 2.5vw, 16px)',
                 lineHeight: 'clamp(20px, 3.5vw, 24px)',
-                color: isActive('/brands') ? '#FCA311' : undefined
+                color: isActive('/') ? '#FCA311' : undefined
               }}
             >
               Brands
@@ -193,57 +158,22 @@ const Header = () => {
             >
               Leaderboard
             </a>
-            <a
-              href="/pricing"
-              className={`block px-3 py-2 transition-colors duration-200 font-medium ${
-                isActive('/pricing') ? '' : 'text-black hover:text-blue-900'
-              }`}
-              style={{
-                fontSize: 'clamp(14px, 2.5vw, 16px)',
-                lineHeight: 'clamp(20px, 3.5vw, 24px)',
-                color: isActive('/pricing') ? '#FCA311' : undefined
-              }}
-            >
-              Pricing
-            </a>
-            <a
-              href="#blog"
-              className={`block px-3 py-2 transition-colors duration-200 font-medium ${
-                isActive('/blog') ? '' : 'text-black hover:text-blue-900'
-              }`}
-              style={{
-                fontSize: 'clamp(14px, 2.5vw, 16px)',
-                lineHeight: 'clamp(20px, 3.5vw, 24px)',
-                color: isActive('/blog') ? '#FCA311' : undefined
-              }}
-            >
-              Blog
-            </a>
             <div className="pt-4 pb-3 border-t border-gray-200">
               <div className="flex flex-col space-y-2 px-3">
-                <button 
-                  className="px-4 py-2 rounded-lg transition-colors duration-200 font-medium text-center w-32"
-                  style={{
-                    border: '1px solid rgba(20, 33, 61, 1)',
-                    color: '#000000',
-                    fontSize: 'clamp(14px, 2.5vw, 16px)',
-                    lineHeight: 'clamp(20px, 3.5vw, 24px)'
-                  }}
-                >
-                  Login
-                </button>
-                <button 
-                  className="px-4 py-2 rounded-lg transition-colors duration-200 font-medium text-center w-32"
+                <a
+                  href="/#contact-us"
+                  className="px-4 py-2 rounded-lg transition-colors duration-200 font-medium text-center w-32 hover:opacity-90"
                   style={{
                     backgroundColor: 'rgba(252, 163, 17, 1)',
                     color: '#ffffff',
                     border: '1px solid rgba(252, 163, 17, 1)',
                     fontSize: 'clamp(14px, 2.5vw, 16px)',
-                    lineHeight: 'clamp(20px, 3.5vw, 24px)'
+                    lineHeight: 'clamp(20px, 3.5vw, 24px)',
+                    textDecoration: 'none'
                   }}
                 >
-                  Get Started
-                </button>
+                  Contact Us
+                </a>
               </div>
             </div>
           </div>

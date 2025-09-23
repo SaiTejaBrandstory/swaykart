@@ -672,18 +672,19 @@ const CreatorFeatures = () => {
           </p>
           
           {/* Download Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full sm:w-auto">
             {/* Google Play Button */}
             <a 
               href="https://play.google.com/store/apps/details?id=com.swaykart.app&pcampaignid=web_share"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center text-white rounded-lg transition-all duration-200 hover:shadow-lg"
+              className="flex items-center justify-center text-white rounded-lg transition-all duration-200 hover:shadow-lg w-full sm:w-auto"
               style={{ 
                 backgroundColor: '#FCA311',
                 minWidth: 'clamp(140px, 20vw, 180px)',
                 minHeight: 'clamp(40px, 6vw, 56px)',
-                padding: 'clamp(8px, 1.5vw, 16px) clamp(16px, 2.5vw, 24px)'
+                padding: 'clamp(8px, 1.5vw, 16px) clamp(16px, 2.5vw, 24px)',
+                maxWidth: '50%'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = '#E6930F'
@@ -703,11 +704,12 @@ const CreatorFeatures = () => {
             
             {/* App Store Button */}
             <button 
-              className="flex items-center bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+              className="flex items-center justify-center bg-black text-white rounded-lg hover:bg-gray-800 transition-colors w-full sm:w-auto"
               style={{ 
                 minWidth: 'clamp(140px, 20vw, 180px)',
                 minHeight: 'clamp(40px, 6vw, 56px)',
-                padding: 'clamp(8px, 1.5vw, 16px) clamp(16px, 2.5vw, 24px)'
+                padding: 'clamp(8px, 1.5vw, 16px) clamp(16px, 2.5vw, 24px)',
+                maxWidth: '50%'
               }}
             >
               <svg className="mr-3" viewBox="0 0 24 24" fill="currentColor" style={{ width: 'clamp(20px, 3vw, 24px)', height: 'clamp(20px, 3vw, 24px)' }}>
