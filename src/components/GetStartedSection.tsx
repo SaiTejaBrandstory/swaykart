@@ -7,6 +7,9 @@ const GetStartedSection = () => {
     workEmail: '',
     companySize: ''
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [message, setMessage] = useState('')
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -16,10 +19,47 @@ const GetStartedSection = () => {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
-    // Handle form submission here
+    setIsSubmitting(true)
+    setMessage('')
+
+    try {
+      // Map form data to match database schema
+      const apiData = {
+        full_name: formData.fullName,
+        company_email: formData.workEmail,
+        company_size: formData.companySize
+      }
+
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(apiData),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setIsSuccess(true)
+        setMessage(data.message)
+        setFormData({
+          fullName: '',
+          workEmail: '',
+          companySize: ''
+        })
+      } else {
+        setIsSuccess(false)
+        setMessage(data.error || 'Something went wrong. Please try again.')
+      }
+    } catch (error) {
+      setIsSuccess(false)
+      setMessage('Network error. Please check your connection and try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -199,10 +239,24 @@ const GetStartedSection = () => {
                   </div>
                 </div>
 
+                {/* Message Display */}
+                {message && (
+                  <div className={`p-4 rounded-lg ${
+                    isSuccess 
+                      ? 'bg-green-50 text-green-700 border border-green-200' 
+                      : 'bg-red-50 text-red-700 border border-red-200'
+                  }`}>
+                    {message}
+                  </div>
+                )}
+
                 {/* Submit Button */}
                                  <button
                    type="submit"
-                   className="w-full py-4 rounded-lg transition-colors duration-200"
+                   disabled={isSubmitting}
+                   className={`w-full py-4 rounded-lg transition-colors duration-200 ${
+                     isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                   }`}
                    style={{
                      fontFamily: 'Inter',
                      fontWeight: 600,
@@ -210,11 +264,11 @@ const GetStartedSection = () => {
                      lineHeight: '100%',
                      textAlign: 'center',
                      color: '#FFFFFF',
-                     backgroundColor: '#FCA311',
+                     backgroundColor: isSubmitting ? '#9CA3AF' : '#FCA311',
                      border: 'none'
                    }}
                  >
-                   Get Started
+                   {isSubmitting ? 'Submitting...' : 'Get Started'}
                  </button>
               </form>
               </div>
