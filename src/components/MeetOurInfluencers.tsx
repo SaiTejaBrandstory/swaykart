@@ -467,7 +467,7 @@ const MeetOurInfluencers = () => {
                 
                 {noMatchFound && (
                   <p className="text-red-600 text-sm text-center">
-                    No influencer found with the name "{searchQuery}". Please try a different search term.
+                    No influencer found with the name &ldquo;{searchQuery}&rdquo;. Please try a different search term.
                   </p>
                 )}
                 
