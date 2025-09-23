@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 interface Influencer {
   id: number;
@@ -13,12 +13,29 @@ interface Influencer {
 
 const MeetOurInfluencers = () => {
   const [searchQuery, setSearchQuery] = useState('')
-  const [suggestions, setSuggestions] = useState<Influencer[]>([])
-  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [allInfluencers, setAllInfluencers] = useState<Influencer[]>([])
-  const [isSearching, setIsSearching] = useState(false)
-  const [noMatchFound, setNoMatchFound] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [suggestionSelected, setSuggestionSelected] = useState(false)
+
+  // Simple debounced search like leaderboard
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Show/hide suggestions based on debounced query
+  useEffect(() => {
+    if (debouncedSearchQuery.trim().length >= 2 && !suggestionSelected) {
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+  }, [debouncedSearchQuery, suggestionSelected]);
 
   // Sample influencer data for the scrolling animation
   const sampleInfluencers = [
@@ -82,123 +99,38 @@ const MeetOurInfluencers = () => {
     }
   }, [allInfluencers.length])
 
-  // Optimized debounced search function
-  const debouncedSearch = React.useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout
-      return (query: string) => {
-        clearTimeout(timeoutId)
-        timeoutId = setTimeout(() => {
-          if (query.trim().length >= 2) {
-            setIsSearching(true)
-            
-            // Use requestAnimationFrame for smooth UI updates
-            requestAnimationFrame(() => {
-              const queryLower = query.toLowerCase()
-              
-              // Optimized search with early termination and indexing
-              const filtered = []
-              const maxResults = 20 // Reduced from 50 for faster performance
-              
-              for (let i = 0; i < allInfluencers.length && filtered.length < maxResults; i++) {
-                const influencer = allInfluencers[i]
-                const username = influencer.username?.toLowerCase() || ''
-                const categories = influencer.categories_combined?.toLowerCase() || ''
-                
-                // Check username first (most common search)
-                if (username.includes(queryLower)) {
-                  filtered.push(influencer)
-                } else if (categories.includes(queryLower)) {
-                  filtered.push(influencer)
-                }
-              }
-              
-              setSuggestions(filtered)
-              setShowSuggestions(true)
-              setIsSearching(false)
-            })
-          } else {
-            setSuggestions([])
-            setShowSuggestions(false)
-            setIsSearching(false)
-          }
-        }, 200) // Reduced debounce delay from 300ms to 200ms
-      }
-    })(),
-    [allInfluencers]
-  )
+  // Simple search function
+  const getFilteredInfluencers = () => {
+    if (!debouncedSearchQuery.trim()) return []
+    
+    const queryLower = debouncedSearchQuery.toLowerCase()
+    return allInfluencers.filter(influencer => {
+      const username = influencer.username?.toLowerCase() || ''
+      const categories = influencer.categories_combined?.toLowerCase() || ''
+      return username.includes(queryLower) || categories.includes(queryLower)
+    }).slice(0, 20) // Limit to 20 results
+  }
 
-  // Handle search input changes with debounced search
+  // Simple search change handler
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value
-    setSearchQuery(query)
-    setNoMatchFound(false) // Reset no match found state when typing
-    debouncedSearch(query)
+    setSearchQuery(e.target.value)
+    // Reset suggestion selected flag when user starts typing
+    setSuggestionSelected(false)
   }
 
   const handleSuggestionClick = (influencer: Influencer) => {
-    console.log('Selected influencer:', influencer.username)
     setSearchQuery(influencer.username)
     setShowSuggestions(false)
-    setNoMatchFound(false) // Reset no match found state when selecting suggestion
-    // No navigation here - just select the influencer
-  }
-
-  const handleNavigateToSelectedInfluencer = () => {
-    if (!searchQuery.trim()) return
-    
-    // Find the exact influencer that matches the search query
-    const exactMatch = allInfluencers.find(influencer => 
-      influencer.username.toLowerCase() === searchQuery.toLowerCase()
-    )
-    
-    if (exactMatch) {
-      console.log('Navigating to influencer:', exactMatch.username)
-      window.location.href = `/influencer/${exactMatch.username}`
-    }
+    setSuggestionSelected(true)
+    // Only select the influencer, don't navigate yet
   }
 
   const handleSearchButtonClick = () => {
-    if (!searchQuery.trim()) return
-    
-    // Optimized search with early termination
-    const queryLower = searchQuery.toLowerCase()
-    let foundMatch = false
-    
-    for (let i = 0; i < allInfluencers.length; i++) {
-      const influencer = allInfluencers[i]
-      const username = influencer.username?.toLowerCase() || ''
-      const categories = influencer.categories_combined?.toLowerCase() || ''
-      
-      if (username.includes(queryLower) || categories.includes(queryLower)) {
-        foundMatch = true
-        break
-      }
+    const filteredInfluencers = getFilteredInfluencers()
+    if (filteredInfluencers.length > 0) {
+      // Navigate to first matching influencer
+      window.location.href = `/influencer/${filteredInfluencers[0].username}`
     }
-    
-    if (foundMatch) {
-      // There are suggestions available, user should select from dropdown
-      setShowSuggestions(true)
-      setNoMatchFound(false)
-    } else {
-      // No suggestions available, show no match found
-      setNoMatchFound(true)
-      setShowSuggestions(false)
-    }
-  }
-
-  const handleInputFocus = () => {
-    if (searchQuery.trim().length >= 2 && suggestions.length > 0) {
-      setShowSuggestions(true)
-    }
-  }
-
-  const handleInputBlur = () => {
-    // Delay hiding suggestions to allow clicks
-    setTimeout(() => {
-      console.log('Hiding suggestions due to blur')
-      setShowSuggestions(false)
-    }, 300)
   }
 
   return (
@@ -384,91 +316,72 @@ const MeetOurInfluencers = () => {
                 </div>
                 <input
                   type="text"
-                  placeholder={isLoading ? "Loading influencers..." : isSearching ? "Searching..." : "Search influencers"}
+                  placeholder="Search Influencers, Categories ...."
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  onFocus={handleInputFocus}
-                  onBlur={handleInputBlur}
-                  disabled={isSearching || isLoading}
+                  disabled={isLoading}
                   className="w-full pl-12 pr-4 py-4 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none disabled:opacity-50"
                   style={{ 
                     fontSize: 'clamp(14px, 2.5vw, 18px)',
                     backgroundColor: '#FFFFFF',
                     border: '1px solid #E5E7EB'
                   }}
+                  autoComplete="off"
                 />
                 
                 {/* Suggestions Dropdown */}
-                {showSuggestions && searchQuery.trim().length >= 2 && (
-                  <div 
-                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-50"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {isSearching ? (
-                      <div className="p-4 text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500"></div>
-                          <span className="text-gray-600">Searching...</span>
-                        </div>
-                      </div>
-                    ) : suggestions.length > 0 ? (
-                      <>
-                        <div className="p-2 text-sm text-gray-600 border-b border-gray-100">
-                          Showing {suggestions.length} results{suggestions.length === 50 ? ' (showing first 50)' : ''}
-              </div>
-                        {suggestions.map((influencer) => (
-                          <div
-                            key={influencer.id}
-                            onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              console.log('Div clicked for:', influencer.username)
-                              handleSuggestionClick(influencer)
-                            }}
-                            onMouseDown={(e) => {
-                              e.preventDefault()
-                              console.log('Mouse down on:', influencer.username)
-                            }}
-                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors duration-150"
-                            style={{ userSelect: 'none' }}
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
-                                <span className="text-orange-600 font-bold text-sm">
-                                  {influencer.username.charAt(0).toUpperCase()}
-                                </span>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center space-x-2">
-                                  <span className="font-medium text-gray-900 truncate">
-                                    {influencer.username}
+                {showSuggestions && debouncedSearchQuery.trim().length >= 2 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-50">
+                    {(() => {
+                      const filteredInfluencers = getFilteredInfluencers()
+                      return filteredInfluencers.length > 0 ? (
+                        <>
+                          <div className="p-2 text-sm text-gray-600 border-b border-gray-100">
+                            Showing {filteredInfluencers.length} results
+                          </div>
+                          {filteredInfluencers.map((influencer) => (
+                            <div
+                              key={influencer.id}
+                              onClick={() => handleSuggestionClick(influencer)}
+                              className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors duration-150"
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                  <span className="text-orange-600 font-bold text-sm">
+                                    {influencer.username.charAt(0).toUpperCase()}
                                   </span>
-                                  {influencer.verified && (
-                                    <svg className="w-4 h-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                      <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                    </svg>
-                                  )}
                                 </div>
-                                <p className="text-sm text-gray-500 truncate">
-                                  {influencer.followers_count?.toLocaleString()} followers
-                                </p>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center space-x-2">
+                                    <span className="font-medium text-gray-900 truncate">
+                                      {influencer.username}
+                                    </span>
+                                    {influencer.verified && (
+                                      <svg className="w-4 h-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                      </svg>
+                                    )}
+                                  </div>
+                                  <p className="text-sm text-gray-500 truncate">
+                                    {influencer.followers_count?.toLocaleString()} followers
+                                  </p>
+                                </div>
                               </div>
                             </div>
+                          ))}
+                        </>
+                      ) : (
+                        <div className="p-8 text-center">
+                          <div className="text-gray-400 mb-2">
+                            <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
                           </div>
-                        ))}
-                      </>
-                    ) : (
-                      <div className="p-8 text-center">
-                        <div className="text-gray-400 mb-2">
-                          <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                          </svg>
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">No influencers found</h3>
+                          <p className="text-gray-600">Try searching with different keywords or check the spelling.</p>
                         </div>
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">No influencers found</h3>
-                        <p className="text-gray-600">Try searching with different keywords or check the spelling.</p>
-                      </div>
-                    )}
+                      )
+                    })()}
                   </div>
                 )}
                </div>
@@ -476,22 +389,22 @@ const MeetOurInfluencers = () => {
               {/* Search Button */}
               <div className="flex flex-col items-center space-y-3">
                 <button
-                  onClick={noMatchFound ? handleSearchButtonClick : handleNavigateToSelectedInfluencer}
-                  disabled={isSearching || isLoading || !searchQuery.trim()}
+                  onClick={handleSearchButtonClick}
+                  disabled={isLoading || !searchQuery.trim()}
                   className="px-8 py-3 rounded-xl font-semibold text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{
-                    backgroundColor: noMatchFound ? '#DC2626' : '#FCA311',
+                    backgroundColor: '#FCA311',
                     fontSize: 'clamp(14px, 2.5vw, 18px)',
-                    boxShadow: noMatchFound ? '0 4px 15px rgba(220, 38, 38, 0.3)' : '0 4px 15px rgba(252, 163, 17, 0.3)'
+                    boxShadow: '0 4px 15px rgba(252, 163, 17, 0.3)'
                   }}
                   onMouseEnter={(e) => {
-                    if (!isSearching && !isLoading && !noMatchFound) {
-                      e.currentTarget.style.backgroundColor = '#E6930F' // Darker orange on hover
+                    if (!isLoading) {
+                      e.currentTarget.style.backgroundColor = '#E6930F'
                     }
                   }}
                   onMouseLeave={(e) => {
-                    if (!isSearching && !isLoading && !noMatchFound) {
-                      e.currentTarget.style.backgroundColor = '#FCA311' // Back to original orange
+                    if (!isLoading) {
+                      e.currentTarget.style.backgroundColor = '#FCA311'
                     }
                   }}
                 >
@@ -500,29 +413,10 @@ const MeetOurInfluencers = () => {
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                       <span>Loading...</span>
                     </div>
-                  ) : isSearching ? (
-                    <div className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      <span>Searching...</span>
-                    </div>
-                  ) : noMatchFound ? (
-                    'No Influencer Found'
                   ) : (
                     'Search Influencer'
                   )}
                 </button>
-                
-                {noMatchFound && (
-                  <p className="text-red-600 text-sm text-center">
-                    No influencer found with the name &ldquo;{searchQuery}&rdquo;. Please try a different search term.
-                  </p>
-                )}
-                
-                {searchQuery.trim().length === 1 && !noMatchFound && (
-                  <p className="text-gray-600 text-sm text-center">
-                    Type at least 2 characters to see suggestions, then select an influencer to visit their page.
-                  </p>
-                )}
               </div>
              </div>
            </div>
