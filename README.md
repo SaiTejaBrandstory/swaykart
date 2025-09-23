@@ -1,6 +1,21 @@
 # SwayKart
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+SwayKart is an influencer marketing platform that connects brands with content creators to run effective marketing campaigns. Built with Next.js and PostgreSQL, it provides a comprehensive solution for discovering influencers, managing campaigns, and measuring results.
+
+## Features
+
+- **Influencer Discovery**: Browse and discover content creators across various platforms
+- **Campaign Management**: Create and manage influencer marketing campaigns
+- **Analytics & Reporting**: Track campaign performance and measure ROI
+- **Brand Dashboard**: Comprehensive dashboard for brands to manage their influencer partnerships
+- **Contact Integration**: Seamless lead capture and database integration
+
+## Tech Stack
+
+- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, PostgreSQL
+- **Database**: AWS RDS PostgreSQL
+- **Deployment**: Vercel
 
 ## Getting Started
 
