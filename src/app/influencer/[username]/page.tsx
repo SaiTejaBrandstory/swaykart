@@ -271,7 +271,7 @@ export default function InfluencerProfile() {
 
         {/* Profile Analytics Dashboard */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8" style={{ fontFamily: 'Inter' }}>Profile Analytics</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 sm:mb-8" style={{ fontFamily: 'Inter' }}>Profile Analytics</h2>
           
           {/* Top Section - Two main metrics side by side */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
@@ -284,9 +284,8 @@ export default function InfluencerProfile() {
                 fontFamily: 'Inter', 
                 color: '#14213D' 
               }}>{influencer.followers_count?.toLocaleString() || 'N/A'}</div>
-              <div className="text-base sm:text-lg mb-2" style={{ 
-                fontFamily: 'Inter', 
-                color: '#6B7280' 
+              <div className="text-base sm:text-lg mb-2 text-gray-500 dark:text-gray-400" style={{ 
+                fontFamily: 'Inter'
               }}>Followers</div>
             </div>
             
@@ -299,9 +298,8 @@ export default function InfluencerProfile() {
                 fontFamily: 'Inter', 
                 color: '#EC4899' 
               }}>{influencer.engagement_rate ? Number(influencer.engagement_rate).toFixed(2) : 'N/A'}%</div>
-              <div className="text-base sm:text-lg mb-2" style={{ 
-                fontFamily: 'Inter', 
-                color: '#6B7280' 
+              <div className="text-base sm:text-lg mb-2 text-gray-500 dark:text-gray-400" style={{ 
+                fontFamily: 'Inter'
               }}>Engagement</div>
             </div>
           </div>
@@ -314,9 +312,8 @@ export default function InfluencerProfile() {
                 fontFamily: 'Inter', 
                 color: '#14213D' 
               }}>{influencer.posts_count?.toLocaleString() || 'N/A'}</div>
-              <div className="text-sm" style={{ 
-                fontFamily: 'Inter', 
-                color: '#6B7280' 
+              <div className="text-sm text-gray-500 dark:text-gray-400" style={{ 
+                fontFamily: 'Inter'
               }}>Posts</div>
             </div>
             
@@ -326,9 +323,8 @@ export default function InfluencerProfile() {
                 fontFamily: 'Inter', 
                 color: '#F59E0B' 
               }}>{influencer.credibility_score || 'N/A'}</div>
-              <div className="text-sm" style={{ 
-                fontFamily: 'Inter', 
-                color: '#6B7280' 
+              <div className="text-sm text-gray-500 dark:text-gray-400" style={{ 
+                fontFamily: 'Inter'
               }}>Credibility</div>
             </div>
             
@@ -338,9 +334,8 @@ export default function InfluencerProfile() {
                 fontFamily: 'Inter', 
                 color: '#3B82F6' 
               }}>{influencer.confidence_level || 'N/A'}</div>
-              <div className="text-sm" style={{ 
-                fontFamily: 'Inter', 
-                color: '#6B7280' 
+              <div className="text-sm text-gray-500 dark:text-gray-400" style={{ 
+                fontFamily: 'Inter'
               }}>Confidence Level</div>
             </div>
             
@@ -350,9 +345,8 @@ export default function InfluencerProfile() {
                 fontFamily: 'Inter', 
                 color: '#F59E0B' 
               }}>{influencer.hashtag_diversity || 'N/A'}</div>
-              <div className="text-sm" style={{ 
-                fontFamily: 'Inter', 
-                color: '#6B7280' 
+              <div className="text-sm text-gray-500 dark:text-gray-400" style={{ 
+                fontFamily: 'Inter'
               }}>Hashtag Diversity</div>
             </div>
             
@@ -362,9 +356,8 @@ export default function InfluencerProfile() {
                 fontFamily: 'Inter', 
                 color: '#14213D' 
               }}>{influencer.average_days_between_posts || 'N/A'}</div>
-              <div className="text-sm" style={{ 
-                fontFamily: 'Inter', 
-                color: '#6B7280' 
+              <div className="text-sm text-gray-500 dark:text-gray-400" style={{ 
+                fontFamily: 'Inter'
               }}>Days Between Posts</div>
             </div>
             
@@ -374,9 +367,8 @@ export default function InfluencerProfile() {
                 fontFamily: 'Inter', 
                 color: '#F59E0B' 
               }}>{influencer.risk_level_value || 'N/A'}</div>
-              <div className="text-sm" style={{ 
-                fontFamily: 'Inter', 
-                color: '#6B7280' 
+              <div className="text-sm text-gray-500 dark:text-gray-400" style={{ 
+                fontFamily: 'Inter'
               }}>Risk Level</div>
             </div>
           </div>
@@ -527,46 +519,46 @@ export default function InfluencerProfile() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Basic Information */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Basic Information</h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Categories</span>
-                    <span className="font-medium">{influencer.categories_combined || 'N/A'}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Categories</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{influencer.categories_combined || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Locations</span>
-                    <span className="font-medium">{influencer.locations_combined || 'N/A'}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Locations</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{influencer.locations_combined || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Verified</span>
-                    <span className="font-medium">{influencer.verified ? 'Yes' : 'No'}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Verified</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{influencer.verified ? 'Yes' : 'No'}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Influencer Rank</span>
-                    <span className="font-medium">#{influencer.influencer_rank || 'N/A'}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Influencer Rank</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">#{influencer.influencer_rank || 'N/A'}</span>
                   </div>
                 </div>
               </div>
 
               {/* Content Performance */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Content Performance</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Content Performance</h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Days Between Posts</span>
-                    <span className="font-medium">{influencer.average_days_between_posts || 'N/A'}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Days Between Posts</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{influencer.average_days_between_posts || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Hashtag Diversity</span>
-                    <span className="font-medium">{influencer.hashtag_diversity || 'N/A'}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Hashtag Diversity</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{influencer.hashtag_diversity || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Total Hashtags</span>
-                    <span className="font-medium">{influencer.total_unique_hashtags || 'N/A'}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Total Hashtags</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{influencer.total_unique_hashtags || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Avg Hashtags/Post</span>
-                    <span className="font-medium">{influencer.avg_hashtags_per_post || 'N/A'}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Avg Hashtags/Post</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{influencer.avg_hashtags_per_post || 'N/A'}</span>
                   </div>
                 </div>
               </div>
