@@ -12,10 +12,11 @@ interface DatabaseTableProps {
   allData?: any[];
   loading?: boolean;
   selectedCategory?: string;
+  selectedLocation?: string;
   sortBy?: string;
 }
 
-const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData = [], loading = false, selectedCategory = 'All Categories', sortBy = 'Ranking' }) => {
+const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData = [], loading = false, selectedCategory = 'All Categories', selectedLocation = 'All Locations', sortBy = 'Ranking' }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   
@@ -33,9 +34,9 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
   
   const itemsPerPage = 10;
 
-  // Filter and sort data based on search query, selected category, and sort option
+  // Filter and sort data based on search query, selected category, selected location, and sort option
   const filteredData = useMemo(() => {
-    console.log('🔍 DatabaseTable - allData length:', allData.length, 'selectedCategory:', selectedCategory, 'searchQuery:', searchQuery);
+    console.log('🔍 DatabaseTable - allData length:', allData.length, 'selectedCategory:', selectedCategory, 'selectedLocation:', selectedLocation, 'searchQuery:', searchQuery);
     let filtered = allData;
     
     // Filter by category first
@@ -47,12 +48,21 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
       });
     }
     
+    // Filter by location
+    if (selectedLocation && selectedLocation !== 'All Locations') {
+      filtered = filtered.filter(row => {
+        if (!row.location) return false;
+        return row.location.trim() === selectedLocation;
+      });
+    }
+    
     // Then filter by search query
     if (searchQuery) {
       const searchLower = searchQuery.toLowerCase();
       filtered = filtered.filter(row => 
         row.username?.toLowerCase().includes(searchLower) ||
-        row.categories_combined?.toLowerCase().includes(searchLower)
+        row.categories_combined?.toLowerCase().includes(searchLower) ||
+        row.location?.toLowerCase().includes(searchLower)
       );
     }
     
@@ -76,7 +86,7 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
     }
     
     return filtered;
-  }, [allData, searchQuery, selectedCategory, sortBy]);
+  }, [allData, searchQuery, selectedCategory, selectedLocation, sortBy]);
 
   // Paginate filtered data
   const paginatedData = useMemo(() => {
@@ -106,10 +116,10 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
     };
   }, [filteredData.length, currentPage, itemsPerPage]);
 
-  // Reset to first page when search, category, or sort changes
+  // Reset to first page when search, category, location, or sort changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory, sortBy]);
+  }, [searchQuery, selectedCategory, selectedLocation, sortBy]);
 
   if (loading) {
     return (
@@ -192,31 +202,64 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
       );
     }
 
-    // Format username with verified icon if verified and make it clickable
+
+    // Format username with profile picture and verified icon
     if (column === 'username') {
       const isVerified = rowData.verified === true;
+      const profilePicUrl = rowData.profile_pic_url_hd;
 
       return (
         <div className="flex items-center">
-          <Link 
-            href={`/influencer/${value}`}
-            className="text-[#14213D] hover:text-[#FCA311] transition-colors duration-200 cursor-pointer"
-            style={{
-              fontFamily: 'Inter',
-              fontWeight: 600,
-              fontSize: 'clamp(14px, 2.5vw, 16px)',
-              lineHeight: 'clamp(20px, 3.5vw, 24px)',
-              letterSpacing: '0%',
-            }}
-          >
-            {value}
-          </Link>
-          {isVerified && (
-            <svg className="ml-1 flex-shrink-0" style={{ width: 'clamp(12px, 2.5vw, 16px)', height: 'clamp(12px, 2.5vw, 16px)' }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-              <polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"></polygon>
-              <polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"></polygon>
+          {/* Profile Picture - positioned before username text starts */}
+          <div className="flex-shrink-0 mr-3">
+            {profilePicUrl ? (
+              <img 
+                src={`/api/image-proxy?url=${encodeURIComponent(profilePicUrl)}`}
+                alt="Profile picture"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-orange-500"
+                onError={(e) => {
+                  // Fallback to default icon if image fails to load
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            {/* Fallback SVG icon - shown if no profile pic or if image fails */}
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              viewBox="0 0 512 512" 
+              className={`w-8 h-8 sm:w-10 sm:h-10 text-gray-400 ${profilePicUrl ? 'hidden' : ''}`}
+            >
+              <path 
+                d="M256 73.825c-100.613 0-182.18 81.562-182.18 182.17a182.18 182.18 0 0 0 364.36 0c0-100.608-81.572-182.17-182.18-182.17zm.553 268.12h-78.93c0-56.91 49.98-56.901 61.07-71.773l1.27-6.793c-15.582-7.893-26.582-26.939-26.582-49.201 0-29.33 19.081-53.122 42.619-53.122 23.532 0 42.61 23.793 42.61 53.122 0 22.078-10.802 41-26.175 49.017l1.442 7.716c12.172 14.16 60.486 15.082 60.486 71.034z" 
+                data-name="Profile Male"
+                fill="currentColor"
+              />
             </svg>
-          )}
+          </div>
+          
+          {/* Username and Verified Icon - aligned under header */}
+          <div className="flex items-center">
+            <Link 
+              href={`/influencer/${value}`}
+              className="text-[#14213D] hover:text-[#FCA311] transition-colors duration-200 cursor-pointer"
+              style={{
+                fontFamily: 'Inter',
+                fontWeight: 600,
+                fontSize: 'clamp(14px, 2.5vw, 16px)',
+                lineHeight: 'clamp(20px, 3.5vw, 24px)',
+                letterSpacing: '0%',
+              }}
+            >
+              {value}
+            </Link>
+            {isVerified && (
+              <svg className="ml-1 flex-shrink-0" style={{ width: 'clamp(12px, 2.5vw, 16px)', height: 'clamp(12px, 2.5vw, 16px)' }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                <polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"></polygon>
+                <polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"></polygon>
+              </svg>
+            )}
+          </div>
         </div>
       );
     }

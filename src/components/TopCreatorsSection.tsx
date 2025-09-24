@@ -7,15 +7,17 @@ import DatabaseTable from './DatabaseTable'
 const TopCreatorsSection = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedIndustry, setSelectedIndustry] = useState('All Categories')
-  const [selectedCity, setSelectedCity] = useState('All Cities')
+  const [selectedLocation, setSelectedLocation] = useState('All Locations')
   const [selectedPlatform, setSelectedPlatform] = useState('Instagram')
   const [sortBy, setSortBy] = useState('Ranking')
   const [totalCreators, setTotalCreators] = useState(0)
   const [loading, setLoading] = useState(true)
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [categories, setCategories] = useState<string[]>([])
+  const [locations, setLocations] = useState<string[]>([])
   const [allData, setAllData] = useState<any[]>([])
   const [categoriesCount, setCategoriesCount] = useState(0)
+  const [locationsCount, setLocationsCount] = useState(0)
 
   // Fetch total count immediately on component mount
   useEffect(() => {
@@ -31,31 +33,43 @@ const TopCreatorsSection = () => {
           setTotalCreators(data.total);
         }
         
-        // Store all data and extract unique categories
+        // Store all data and extract unique categories and locations
         if (data.data && Array.isArray(data.data)) {
           setAllData(data.data);
           
           // Extract ALL categories from ALL records
           const allCategories = new Set<string>();
+          const allLocations = new Set<string>();
           
-          // Process ALL records to get complete category list
+          // Process ALL records to get complete category and location list
           for (let i = 0; i < data.data.length; i++) {
             const influencer = data.data[i];
+            
+            // Extract categories
             if (influencer.categories_combined) {
-              // Fast split and add
               const categories = influencer.categories_combined.split(',');
               for (const cat of categories) {
                 const trimmed = cat.trim();
                 if (trimmed) allCategories.add(trimmed);
               }
             }
+            
+            // Extract locations
+            if (influencer.location) {
+              const trimmed = influencer.location.trim();
+              if (trimmed) allLocations.add(trimmed);
+            }
           }
           
-          // Convert Set to Array and sort
+          // Convert Sets to Arrays and sort
           const uniqueCategories = Array.from(allCategories).sort();
+          const uniqueLocations = Array.from(allLocations).sort();
+          
           setCategories(uniqueCategories);
+          setLocations(uniqueLocations);
           setCategoriesCount(uniqueCategories.length);
-          console.log(`✅ Found ${uniqueCategories.length} unique categories from ALL ${data.data.length} records`);
+          setLocationsCount(uniqueLocations.length);
+          console.log(`✅ Found ${uniqueCategories.length} unique categories and ${uniqueLocations.length} unique locations from ALL ${data.data.length} records`);
         }
         
         const loadTime = Date.now() - startTime;
@@ -313,7 +327,7 @@ const TopCreatorsSection = () => {
               color: '#14213D',
               marginBottom: '6px'
             }}>
-              45
+              {loading ? '...' : locationsCount}
             </p>
             <p style={{
               fontFamily: 'Inter',
@@ -324,7 +338,7 @@ const TopCreatorsSection = () => {
               textAlign: 'center',
               color: '#4B5563'
             }}>
-              Cities
+              Locations
             </p>
           </div>
 
@@ -412,11 +426,11 @@ const TopCreatorsSection = () => {
                 </div>
               </div>
 
-              {/* City Dropdown */}
+              {/* Location Dropdown */}
               <div className="relative">
                 <select
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.target.value)}
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
                     className="block w-full px-3 sm:px-4 py-2 pr-8 text-sm text-[#14213D] bg-white border border-[#E5E7EB] rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FCA311] focus:border-[#FCA311] appearance-none"
                   style={{
                     fontFamily: 'Inter',
@@ -426,10 +440,10 @@ const TopCreatorsSection = () => {
                     letterSpacing: '0%',
                   }}
                 >
-                  <option value="All Cities">All Cities</option>
-                  <option value="Mumbai">Mumbai</option>
-                  <option value="Delhi">Delhi</option>
-                  <option value="Bangalore">Bangalore</option>
+                  <option value="All Locations">All Locations</option>
+                  {locations.map((location, index) => (
+                    <option key={index} value={location}>{location}</option>
+                  ))}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -534,6 +548,7 @@ const TopCreatorsSection = () => {
             allData={allData} 
             loading={loading}
             selectedCategory={selectedIndustry}
+            selectedLocation={selectedLocation}
             sortBy={sortBy}
           />
         ) : (

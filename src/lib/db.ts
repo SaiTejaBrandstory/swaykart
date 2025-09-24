@@ -2,11 +2,15 @@ import { Pool, PoolClient } from 'pg';
 import fs from 'fs';
 import path from 'path';
 
+// Global pool declaration for Vercel serverless persistence
+declare global {
+  // eslint-disable-next-line no-var
+  var _pool: Pool | undefined;
+}
+
 // Database configuration optimized for Vercel serverless
 const isProduction = process.env.NODE_ENV === 'production';
 const isVercel = process.env.VERCEL === '1';
-
-let pool: Pool | null = null;
 
 function getPoolConfig() {
   // Require DATABASE_URL environment variable
@@ -52,58 +56,65 @@ function getPoolConfig() {
     password: url.password,
     ssl: sslConfig,
     // Vercel-optimized settings for serverless
-    max: 1, // Single connection for serverless
+    max: 10, // More connections for bursts
     min: 0, // No minimum connections
-    idleTimeoutMillis: 10000, // 10 seconds
-    connectionTimeoutMillis: 10000, // 10 seconds
-    statement_timeout: 25000, // 25 seconds
-    query_timeout: 25000, // 25 seconds
-    keepAlive: false, // Disable keepAlive for serverless
-    allowExitOnIdle: true, // Important for serverless
-    maxUses: 1 // Single use per connection
+    idleTimeoutMillis: 10000, // 10 seconds - free connections faster
+    connectionTimeoutMillis: 5000, // 5 seconds - fail faster if RDS doesn't respond
+    statement_timeout: 30000, // 30 seconds
+    query_timeout: 30000, // 30 seconds
+    keepAlive: true, // Enable keepAlive for better connection stability
+    allowExitOnIdle: true // Important for serverless
+    // Removed maxUses to allow connection reuse
   };
 
   console.log('🔧 Final database config SSL:', baseConfig.ssl);
   return baseConfig;
 }
 
-// Lazy connection - only create pool when needed
+// Global pool that persists across Vercel invocations
 export function getPool(): Pool {
-  if (!pool) {
+  if (!global._pool) {
     const config = getPoolConfig();
     
     console.log('🔧 Creating new database pool for serverless environment');
 
-    pool = new Pool(config);
+    global._pool = new Pool(config);
 
     // Handle pool errors
-    pool.on('error', (err) => {
+    global._pool.on('error', (err) => {
       console.error('❌ Database pool error:', err);
-      // Reset pool on error to force recreation
-      pool = null;
+      // Reset global pool on error to force recreation
+      global._pool = undefined;
     });
   }
   
-  return pool;
+  return global._pool;
 }
 
-// Get a client from the pool (lazy connection)
+// Get a client from the pool - simple and fast
 export async function getClient(): Promise<PoolClient> {
   const pool = getPool();
-  return await pool.connect();
+  
+  try {
+    const client = await pool.connect();
+    return client;
+  } catch (error) {
+    console.error('❌ Database connection failed:', error);
+    throw error;
+  }
 }
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-  if (pool) {
-    await pool.end();
+  if (global._pool) {
+    await global._pool.end();
   }
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  if (pool) {
-    await pool.end();
+  if (global._pool) {
+    await global._pool.end();
   }
   process.exit(0);
 });

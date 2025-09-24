@@ -53,7 +53,9 @@ export async function GET() {
           categories_combined,
           followers_count,
           engagement_rate,
-          credibility_score
+          credibility_score,
+          profile_pic_url_hd,
+          location
         FROM scrapped.influencer_ui 
         WHERE influencer_rank IS NOT NULL
         ORDER BY id ASC

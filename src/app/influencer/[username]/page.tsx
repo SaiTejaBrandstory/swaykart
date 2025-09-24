@@ -36,6 +36,7 @@ interface InfluencerData {
   value_proposition: string;
   average_days_between_posts: number;
   influencer_rank: number;
+  profile_pic_url_hd?: string;
 }
 
 export default function InfluencerProfile() {
@@ -115,12 +116,25 @@ export default function InfluencerProfile() {
         <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8" style={{ border: '1px solid #E5E7EB' }}>
           {/* Main Profile Section */}
           <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-            {/* Profile Icon */}
+            {/* Profile Picture */}
             <div className="flex-shrink-0 mx-auto sm:mx-0">
+              {influencer.profile_pic_url_hd ? (
+                <img 
+                  src={`/api/image-proxy?url=${encodeURIComponent(influencer.profile_pic_url_hd)}`}
+                  alt={`${influencer.username} profile picture`}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-orange-500"
+                  onError={(e) => {
+                    // Fallback to default icon if image fails to load
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+              ) : null}
+              {/* Fallback SVG icon - shown if no profile pic or if image fails */}
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
                 viewBox="0 0 512 512" 
-                className="w-16 h-16 sm:w-20 sm:h-20 text-orange-600"
+                className={`w-16 h-16 sm:w-20 sm:h-20 text-orange-600 ${influencer.profile_pic_url_hd ? 'hidden' : ''}`}
               >
                 <path 
                   d="M256 73.825c-100.613 0-182.18 81.562-182.18 182.17a182.18 182.18 0 0 0 364.36 0c0-100.608-81.572-182.17-182.18-182.17zm.553 268.12h-78.93c0-56.91 49.98-56.901 61.07-71.773l1.27-6.793c-15.582-7.893-26.582-26.939-26.582-49.201 0-29.33 19.081-53.122 42.619-53.122 23.532 0 42.61 23.793 42.61 53.122 0 22.078-10.802 41-26.175 49.017l1.442 7.716c12.172 14.16 60.486 15.082 60.486 71.034z" 
