@@ -1,4 +1,6 @@
 import { Pool, PoolClient } from 'pg';
+import fs from 'fs';
+import path from 'path';
 
 // Database configuration optimized for Vercel serverless
 const isProduction = process.env.NODE_ENV === 'production';
@@ -7,16 +9,48 @@ const isVercel = process.env.VERCEL === '1';
 let pool: Pool | null = null;
 
 function getPoolConfig() {
+  // Require DATABASE_URL environment variable
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL environment variable is required');
+  }
+
+  // SSL configuration - environment-aware
+  const isProduction = process.env.NODE_ENV === "production";
+  const isVercel = process.env.VERCEL === "1";
+  
+  let sslConfig: any;
+  
+  if (isProduction || isVercel) {
+    // Production: Use AWS RDS CA certificate
+    if (process.env.RDS_CA_CERT) {
+      sslConfig = {
+        ca: Buffer.from(process.env.RDS_CA_CERT, "base64").toString("utf-8"),
+      };
+    } else {
+      // Local production: Load RDS CA cert from file system
+      const certPath = path.join(process.cwd(), "rds-ca.pem");
+      sslConfig = { 
+        ca: fs.readFileSync(certPath).toString() 
+      };
+    }
+  } else {
+    // Development: Allow self-signed certs (bypass SSL verification)
+    sslConfig = { 
+      rejectUnauthorized: false 
+    };
+    console.log('🔧 Development SSL config:', sslConfig);
+  }
+
+  // Parse the connection string to extract individual components
+  const url = new URL(process.env.DATABASE_URL);
+  
   const baseConfig: any = {
-    connectionString: process.env.DATABASE_URL,
-    // Fallback to individual variables if DATABASE_URL is not available
-    ...(process.env.DATABASE_URL ? {} : {
-      host: process.env.DB_HOST || 'swaykart-test.cd4ai80suo3k.ap-south-1.rds.amazonaws.com',
-      port: parseInt(process.env.DB_PORT || '5432'),
-      database: process.env.DB_NAME || 'swaykart',
-      user: process.env.DB_USER || 'saiteja',
-      password: process.env.DB_PASSWORD || 'Swaykart@123',
-    }),
+    host: url.hostname,
+    port: parseInt(url.port) || 5432,
+    database: url.pathname.slice(1), // Remove leading slash
+    user: url.username,
+    password: url.password,
+    ssl: sslConfig,
     // Vercel-optimized settings for serverless
     max: 1, // Single connection for serverless
     min: 0, // No minimum connections
@@ -29,21 +63,7 @@ function getPoolConfig() {
     maxUses: 1 // Single use per connection
   };
 
-  // SSL configuration - use AWS RDS CA cert for production/Vercel
-  if (process.env.VERCEL === "1" || process.env.NODE_ENV === "production") {
-    if (process.env.RDS_CA_CERT) {
-      baseConfig.ssl = {
-        ca: Buffer.from(process.env.RDS_CA_CERT, "base64").toString("utf-8"),
-      };
-    } else {
-      // fallback (less secure)
-      baseConfig.ssl = { rejectUnauthorized: false };
-    }
-  } else {
-    // Development - allow self-signed certs
-    baseConfig.ssl = { rejectUnauthorized: false };
-  }
-
+  console.log('🔧 Final database config SSL:', baseConfig.ssl);
   return baseConfig;
 }
 
