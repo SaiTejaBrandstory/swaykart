@@ -76,6 +76,7 @@ const MeetOurInfluencers = () => {
           console.log('✅ MeetOurInfluencers: Set influencers:', data.data.length);
         } else {
           console.log('❌ MeetOurInfluencers: No data found in response');
+          console.log('❌ MeetOurInfluencers: Response data:', data);
         }
       } catch (error) {
         console.error('❌ MeetOurInfluencers: Error fetching influencers:', error);
@@ -84,13 +85,9 @@ const MeetOurInfluencers = () => {
       }
     }
     
-    // Only fetch if we don't have data yet
-    if (allInfluencers.length === 0) {
-      fetchInfluencers();
-    } else {
-      setIsLoading(false);
-    }
-  }, [allInfluencers.length])
+    // Always fetch data on component mount
+    fetchInfluencers();
+  }, [])
 
   // Enhanced search function (same as leaderboard)
   const getFilteredInfluencers = () => {
@@ -98,16 +95,20 @@ const MeetOurInfluencers = () => {
     
     console.log('🔍 MeetOurInfluencers: Searching for:', debouncedSearchQuery)
     console.log('📊 MeetOurInfluencers: Total influencers available:', allInfluencers.length)
+    console.log('📊 MeetOurInfluencers: Sample influencer data:', allInfluencers.slice(0, 2))
     
     const queryLower = debouncedSearchQuery.toLowerCase()
     const filtered = allInfluencers.filter(influencer => {
       const username = influencer.username?.toLowerCase() || ''
-      const categories = influencer.categories_combined?.toLowerCase() || ''
-      const location = influencer.location?.toLowerCase() || ''
       
-      return username.includes(queryLower) || 
-             categories.includes(queryLower) || 
-             location.includes(queryLower)
+      // Only search by username, not categories or location
+      const matches = username.includes(queryLower)
+      
+      if (matches) {
+        console.log('✅ Username match found:', { username, query: queryLower })
+      }
+      
+      return matches
     }).slice(0, 20) // Limit to 20 results
     
     console.log('✅ MeetOurInfluencers: Filtered results:', filtered.length)
@@ -319,7 +320,7 @@ const MeetOurInfluencers = () => {
                 </div>
                 <input
                   type="text"
-                  placeholder="Search Influencers, Categories ...."
+                  placeholder={isLoading ? "Loading influencers..." : "Search by username..."}
                   value={searchQuery}
                   onChange={handleSearchChange}
                   disabled={isLoading}
@@ -331,6 +332,13 @@ const MeetOurInfluencers = () => {
                   }}
                   autoComplete="off"
                 />
+                
+                {/* Loading indicator */}
+                {isLoading && (
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
+                    <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
                 
                 {/* Suggestions Dropdown */}
                 {showSuggestions && debouncedSearchQuery.trim().length >= 2 && (
