@@ -31,7 +31,7 @@ const Footer = () => {
             </p>
 
             {/* Social Media Icons */}
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 mb-6">
               {/* LinkedIn */}
               <a href="https://www.linkedin.com/company/swaykart/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity duration-200">
                 <i className="fab fa-linkedin text-white text-xl"></i>
@@ -41,6 +41,15 @@ const Footer = () => {
               <a href="https://www.instagram.com/swaykart/?hl=en" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity duration-200">
                 <i className="fab fa-instagram text-white text-xl"></i>
               </a>
+            </div>
+
+            {/* Startup India Logo */}
+            <div className="flex items-center">
+              <img 
+                src="/images/logo/startup-india-logo.svg" 
+                alt="Startup India Logo" 
+                className="w-auto h-12"
+              />
             </div>
           </div>
 
