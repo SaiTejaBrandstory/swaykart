@@ -99,7 +99,7 @@ export async function GET(request: Request) {
         throw new Error('Database client not available');
       }
       return await client.query(`
-        SELECT COUNT(DISTINCT id) as total
+        SELECT COUNT(id) as total
         FROM scrapped.influencer_ui_leader 
         WHERE influencer_rank IS NOT NULL
       `);
@@ -114,7 +114,7 @@ export async function GET(request: Request) {
         throw new Error('Database client not available');
       }
       return await client.query(`
-        SELECT DISTINCT ON (id)
+        SELECT 
           id,
           influencer_rank,
           username,
@@ -132,24 +132,7 @@ export async function GET(request: Request) {
       `, [limit, offset]);
     });
 
-    // More robust deduplication using Map
-    const uniqueMap = new Map();
-    result.rows.forEach(row => {
-      if (!uniqueMap.has(row.id)) {
-        uniqueMap.set(row.id, row);
-      }
-    });
-    const uniqueData = Array.from(uniqueMap.values());
-    
-    // Quick duplicate check
-    const uniqueIds = new Set(uniqueData.map(item => item.id));
-    let finalData = uniqueData;
-    if (uniqueIds.size !== uniqueData.length) {
-      console.log('⚠️ Duplicates detected, filtering...');
-      finalData = uniqueData.filter((item, index, self) => 
-        index === self.findIndex(t => t.id === item.id)
-      );
-    }
+    const finalData = result.rows;
     
     const loadTime = Date.now() - startTime;
     console.log(`✅ Loaded ${finalData.length} records (page ${page}/${totalPages}) in ${loadTime}ms`);
