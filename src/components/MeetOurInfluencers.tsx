@@ -65,7 +65,7 @@ const MeetOurInfluencers = () => {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 5000) // 5s timeout
         
-        const response = await fetch('/api/influencers', {
+        const response = await fetch('/api/influencers?all=true', {
           signal: controller.signal,
           headers: {
             'Cache-Control': 'max-age=300', // 5 minutes cache
@@ -79,8 +79,12 @@ const MeetOurInfluencers = () => {
         }
         
         const data = await response.json()
+        console.log('MeetOurInfluencers: Fetched data:', data)
         if (data.data) {
           setAllInfluencers(data.data)
+          console.log('MeetOurInfluencers: Set influencers:', data.data.length)
+        } else {
+          console.log('MeetOurInfluencers: No data found in response')
         }
       } catch (error) {
         if (error instanceof Error && error.name !== 'AbortError') {
@@ -103,12 +107,18 @@ const MeetOurInfluencers = () => {
   const getFilteredInfluencers = () => {
     if (!debouncedSearchQuery.trim()) return []
     
+    console.log('MeetOurInfluencers: Searching for:', debouncedSearchQuery)
+    console.log('MeetOurInfluencers: Total influencers available:', allInfluencers.length)
+    
     const queryLower = debouncedSearchQuery.toLowerCase()
-    return allInfluencers.filter(influencer => {
+    const filtered = allInfluencers.filter(influencer => {
       const username = influencer.username?.toLowerCase() || ''
       const categories = influencer.categories_combined?.toLowerCase() || ''
       return username.includes(queryLower) || categories.includes(queryLower)
     }).slice(0, 20) // Limit to 20 results
+    
+    console.log('MeetOurInfluencers: Filtered results:', filtered.length)
+    return filtered
   }
 
   // Simple search change handler
