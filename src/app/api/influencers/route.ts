@@ -100,7 +100,7 @@ export async function GET(request: Request) {
       }
       return await client.query(`
         SELECT COUNT(DISTINCT id) as total
-        FROM scrapped.influencer_ui 
+        FROM scrapped.influencer_ui_leader 
         WHERE influencer_rank IS NOT NULL
       `);
     });
@@ -125,7 +125,7 @@ export async function GET(request: Request) {
           credibility_score,
           profile_pic_url_hd,
           location
-        FROM scrapped.influencer_ui 
+        FROM scrapped.influencer_ui_leader 
         WHERE influencer_rank IS NOT NULL
         ORDER BY id ASC
         LIMIT $1 OFFSET $2
