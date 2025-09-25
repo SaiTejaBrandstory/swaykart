@@ -60,8 +60,8 @@ function getPoolConfig() {
     min: 0, // No minimum connections
     idleTimeoutMillis: 10000, // 10 seconds - free connections faster
     connectionTimeoutMillis: 5000, // 5 seconds - fail faster if RDS doesn't respond
-    statement_timeout: 30000, // 30 seconds
-    query_timeout: 30000, // 30 seconds
+    statement_timeout: 60000, // 60 seconds - increased for large queries
+    query_timeout: 60000, // 60 seconds - increased for large queries
     keepAlive: true, // Enable keepAlive for better connection stability
     allowExitOnIdle: true // Important for serverless
     // Removed maxUses to allow connection reuse

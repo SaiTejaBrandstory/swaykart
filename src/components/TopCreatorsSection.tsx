@@ -18,6 +18,7 @@ const TopCreatorsSection = () => {
   const [allData, setAllData] = useState<any[]>([])
   const [categoriesCount, setCategoriesCount] = useState(0)
   const [locationsCount, setLocationsCount] = useState(0)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   // Fetch total count immediately on component mount
   useEffect(() => {
@@ -26,7 +27,7 @@ const TopCreatorsSection = () => {
         console.log('🚀 Fetching total count...');
         const startTime = Date.now();
         
-            const response = await fetch('/api/influencers');
+            const response = await fetch('/api/influencers?all=true');
         const data = await response.json();
         
         if (data.total) {
@@ -87,11 +88,64 @@ const TopCreatorsSection = () => {
   // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300); // 300ms delay
+    setDebouncedSearchQuery(searchQuery);
+  }, 300); // 300ms delay
 
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+  return () => clearTimeout(timer);
+}, [searchQuery]);
+
+// Function to force refresh data
+const forceRefreshData = async () => {
+  setIsRefreshing(true);
+  try {
+    console.log('🔄 Force refreshing data...');
+    const response = await fetch('/api/influencers?all=true&fresh=true');
+    const data = await response.json();
+    
+    if (data.total) {
+      setTotalCreators(data.total);
+    }
+    
+    if (data.data && Array.isArray(data.data)) {
+      setAllData(data.data);
+      
+      // Re-extract categories and locations
+      const allCategories = new Set<string>();
+      const allLocations = new Set<string>();
+      
+      for (let i = 0; i < data.data.length; i++) {
+        const influencer = data.data[i];
+        
+        if (influencer.categories_combined) {
+          const categories = influencer.categories_combined.split(',');
+          for (const cat of categories) {
+            const trimmed = cat.trim();
+            if (trimmed) allCategories.add(trimmed);
+          }
+        }
+        
+        if (influencer.location) {
+          const trimmed = influencer.location.trim();
+          if (trimmed) allLocations.add(trimmed);
+        }
+      }
+      
+      const uniqueCategories = Array.from(allCategories).sort();
+      const uniqueLocations = Array.from(allLocations).sort();
+      
+      setCategories(uniqueCategories);
+      setLocations(uniqueLocations);
+      setCategoriesCount(uniqueCategories.length);
+      setLocationsCount(uniqueLocations.length);
+      
+      console.log('✅ Data refreshed successfully');
+    }
+  } catch (error) {
+    console.error('Error refreshing data:', error);
+  } finally {
+    setIsRefreshing(false);
+  }
+};
 
   const creators = [
     {
@@ -230,36 +284,65 @@ const TopCreatorsSection = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Header Section */}
         <div className="text-left mb-8 sm:mb-12">
-          <div className="flex flex-col sm:flex-row items-start">
-            <Image 
-              src="/images/leaderboard/trophy.svg" 
-              alt="Trophy" 
-              width={64}
-              height={64}
-              className="w-12 h-12 sm:w-16 sm:h-16 mb-4 sm:mb-0 sm:mr-6 flex-shrink-0"
-            />
-            <div>
-              <h1 style={{
-                fontFamily: 'Inter',
-                fontWeight: 700,
-                fontSize: 'clamp(24px, 4vw, 30px)',
-                lineHeight: 'clamp(28px, 5vw, 36px)',
-                letterSpacing: '0%',
-                color: '#14213D',
-                marginBottom: '8px'
-              }}>
-                Top Creators from India
-              </h1>
-              <p style={{
-                fontFamily: 'Inter',
-                fontWeight: 400,
-                fontSize: 'clamp(14px, 2.5vw, 16px)',
-                lineHeight: 'clamp(20px, 3.5vw, 24px)',
-                letterSpacing: '0%',
-                color: '#4B5563'
-              }}>
-                Discover the most influential content creators across all platforms and categories
-              </p>
+          <div className="flex flex-col sm:flex-row items-start justify-between">
+            <div className="flex flex-col sm:flex-row items-start">
+              <Image 
+                src="/images/leaderboard/trophy.svg" 
+                alt="Trophy" 
+                width={64}
+                height={64}
+                className="w-12 h-12 sm:w-16 sm:h-16 mb-4 sm:mb-0 sm:mr-6 flex-shrink-0"
+              />
+              <div>
+                <h1 style={{
+                  fontFamily: 'Inter',
+                  fontWeight: 700,
+                  fontSize: 'clamp(24px, 4vw, 30px)',
+                  lineHeight: 'clamp(28px, 5vw, 36px)',
+                  letterSpacing: '0%',
+                  color: '#14213D',
+                  marginBottom: '8px'
+                }}>
+                  Top Creators from India
+                </h1>
+                <p style={{
+                  fontFamily: 'Inter',
+                  fontWeight: 400,
+                  fontSize: 'clamp(14px, 2.5vw, 16px)',
+                  lineHeight: 'clamp(20px, 3.5vw, 24px)',
+                  letterSpacing: '0%',
+                  color: '#4B5563'
+                }}>
+                  Discover the most influential content creators across all platforms and categories
+                </p>
+              </div>
+            </div>
+            
+            {/* Refresh Button */}
+            <div className="mt-4 sm:mt-0">
+              <button
+                onClick={forceRefreshData}
+                disabled={isRefreshing}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#FCA311] rounded-lg hover:bg-[#E6940F] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                style={{
+                  fontFamily: 'Inter',
+                  fontWeight: 500,
+                  fontSize: 'clamp(14px, 2vw, 16px)',
+                  lineHeight: 'clamp(16px, 3vw, 20px)',
+                }}
+              >
+                {isRefreshing ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Refreshing...</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-refresh text-sm"></i>
+                    <span>Refresh Data</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
@@ -481,25 +564,43 @@ const TopCreatorsSection = () => {
 
               {/* Sort By */}
                 <div className="relative">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="block w-full px-3 sm:px-4 py-2 pr-8 text-sm text-[#14213D] bg-white border border-[#E5E7EB] rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FCA311] focus:border-[#FCA311] appearance-none"
-                    style={{
-                      fontFamily: 'Inter',
-                      fontWeight: 400,
-                      fontSize: 'clamp(14px, 2vw, 16px)',
-                      lineHeight: 'clamp(16px, 3vw, 20px)',
-                      letterSpacing: '0%',
-                    }}
-                  >
-                    <option value="Ranking">Ranking</option>
-                    <option value="Followers">Followers</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
+                  <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2">
+                      <i className="fa-solid fa-sort" style={{ color: '#FCA311', fontSize: 'clamp(14px, 2.5vw, 16px)' }}></i>
+                      <span style={{
+                        fontFamily: 'Inter',
+                        fontWeight: 400,
+                        fontSize: 'clamp(14px, 2vw, 16px)',
+                        lineHeight: 'clamp(16px, 3vw, 20px)',
+                        letterSpacing: '0%',
+                        color: '#14213D',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        Sort by:
+                      </span>
+                    </div>
+                    <div className="relative flex-1">
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="block w-full px-3 sm:px-4 py-2 pr-8 text-sm text-[#14213D] bg-white border border-[#E5E7EB] rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FCA311] focus:border-[#FCA311] appearance-none"
+                        style={{
+                          fontFamily: 'Inter',
+                          fontWeight: 400,
+                          fontSize: 'clamp(14px, 2vw, 16px)',
+                          lineHeight: 'clamp(16px, 3vw, 20px)',
+                          letterSpacing: '0%',
+                        }}
+                      >
+                        <option value="Ranking">Ranking</option>
+                        <option value="Followers">Followers</option>
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
