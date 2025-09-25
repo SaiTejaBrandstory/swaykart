@@ -57,67 +57,59 @@ const MeetOurInfluencers = () => {
     { id: 16, name: 'Influencer 16', image: '/images/home/influencers/influencers-16.png', verified: false }
   ]
 
-  // Fetch influencers with optimizations
+  // Fetch influencers with same approach as leaderboard
   useEffect(() => {
     const fetchInfluencers = async () => {
       try {
-        // Use AbortController for cancellation
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 5000) // 5s timeout
+        console.log('🚀 MeetOurInfluencers: Fetching data...');
+        const startTime = Date.now();
         
-        const response = await fetch('/api/influencers?all=true', {
-          signal: controller.signal,
-          headers: {
-            'Cache-Control': 'max-age=300', // 5 minutes cache
-          }
-        })
+        const response = await fetch('/api/influencers?all=true');
+        const data = await response.json();
         
-        clearTimeout(timeoutId)
+        const loadTime = Date.now() - startTime;
+        console.log(`✅ MeetOurInfluencers: Loaded in ${loadTime}ms`);
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const data = await response.json()
-        console.log('MeetOurInfluencers: Fetched data:', data)
-        if (data.data) {
-          setAllInfluencers(data.data)
-          console.log('MeetOurInfluencers: Set influencers:', data.data.length)
+        if (data.data && Array.isArray(data.data)) {
+          setAllInfluencers(data.data);
+          console.log('✅ MeetOurInfluencers: Set influencers:', data.data.length);
         } else {
-          console.log('MeetOurInfluencers: No data found in response')
+          console.log('❌ MeetOurInfluencers: No data found in response');
         }
       } catch (error) {
-        if (error instanceof Error && error.name !== 'AbortError') {
-          console.error('Error fetching influencers:', error)
-        }
+        console.error('❌ MeetOurInfluencers: Error fetching influencers:', error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
     
     // Only fetch if we don't have data yet
     if (allInfluencers.length === 0) {
-      fetchInfluencers()
+      fetchInfluencers();
     } else {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }, [allInfluencers.length])
 
-  // Simple search function
+  // Enhanced search function (same as leaderboard)
   const getFilteredInfluencers = () => {
     if (!debouncedSearchQuery.trim()) return []
     
-    console.log('MeetOurInfluencers: Searching for:', debouncedSearchQuery)
-    console.log('MeetOurInfluencers: Total influencers available:', allInfluencers.length)
+    console.log('🔍 MeetOurInfluencers: Searching for:', debouncedSearchQuery)
+    console.log('📊 MeetOurInfluencers: Total influencers available:', allInfluencers.length)
     
     const queryLower = debouncedSearchQuery.toLowerCase()
     const filtered = allInfluencers.filter(influencer => {
       const username = influencer.username?.toLowerCase() || ''
       const categories = influencer.categories_combined?.toLowerCase() || ''
-      return username.includes(queryLower) || categories.includes(queryLower)
+      const location = influencer.location?.toLowerCase() || ''
+      
+      return username.includes(queryLower) || 
+             categories.includes(queryLower) || 
+             location.includes(queryLower)
     }).slice(0, 20) // Limit to 20 results
     
-    console.log('MeetOurInfluencers: Filtered results:', filtered.length)
+    console.log('✅ MeetOurInfluencers: Filtered results:', filtered.length)
     return filtered
   }
 

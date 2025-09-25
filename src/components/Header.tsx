@@ -68,6 +68,19 @@ const Header = () => {
             >
               Leaderboard
             </a>
+            <a
+              href="/about-us"
+              className={`transition-colors duration-200 font-medium ${
+                isActive('/about-us') ? '' : 'text-black hover:text-blue-900'
+              }`}
+              style={{
+                fontSize: 'clamp(14px, 2.5vw, 16px)',
+                lineHeight: 'clamp(20px, 3.5vw, 24px)',
+                color: isActive('/about-us') ? '#FCA311' : undefined
+              }}
+            >
+              About Us
+            </a>
           </nav>
 
           {/* Action Button - Hidden on mobile */}
@@ -157,6 +170,19 @@ const Header = () => {
               }}
             >
               Leaderboard
+            </a>
+            <a
+              href="/about-us"
+              className={`block px-3 py-2 transition-colors duration-200 font-medium ${
+                isActive('/about-us') ? '' : 'text-black hover:text-blue-900'
+              }`}
+              style={{
+                fontSize: 'clamp(14px, 2.5vw, 16px)',
+                lineHeight: 'clamp(20px, 3.5vw, 24px)',
+                color: isActive('/about-us') ? '#FCA311' : undefined
+              }}
+            >
+              About Us
             </a>
             <div className="pt-4 pb-3 border-t border-gray-200">
               <div className="flex flex-col space-y-2 px-3">
