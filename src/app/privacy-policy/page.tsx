@@ -42,7 +42,7 @@ const PrivacyPolicy = () => {
               fontSize: '16px',
               lineHeight: '1.6'
             }}>
-              Welcome to SwayKart ("we," "us," or "our"), owned by Tesoro Innovations Private Limited. Your privacy is important to us, and this Privacy Policy explains how we collect, use, disclose, and protect your personal information when you use our mobile application ("App"), web application ("Website") and any associated services (collectively, the "Services") we own and operate.
+              Welcome to SwayKart (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;), owned by Tesoro Innovations Private Limited. Your privacy is important to us, and this Privacy Policy explains how we collect, use, disclose, and protect your personal information when you use our mobile application (&ldquo;App&rdquo;), web application (&ldquo;Website&rdquo;) and any associated services (collectively, the &ldquo;Services&rdquo;) we own and operate.
             </p>
             <p className="text-gray-700 mb-6 leading-relaxed" style={{
               fontFamily: 'Inter',
@@ -345,7 +345,7 @@ const PrivacyPolicy = () => {
               fontWeight: 700,
               color: '#14213D'
             }}>
-              Children's Privacy
+              Children&apos;s Privacy
             </h2>
             <p className="text-gray-700 mb-6 leading-relaxed" style={{
               fontFamily: 'Inter',
@@ -369,7 +369,7 @@ const PrivacyPolicy = () => {
               fontSize: '16px',
               lineHeight: '1.6'
             }}>
-              We may update this Privacy Policy from time to time to reflect changes in the law, our data collection practices, or our business operations. We will notify you of any material changes by updating the "Last Updated" date at the top of this policy or through other communication methods.
+              We may update this Privacy Policy from time to time to reflect changes in the law, our data collection practices, or our business operations. We will notify you of any material changes by updating the &ldquo;Last Updated&rdquo; date at the top of this policy or through other communication methods.
             </p>
 
             <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4" style={{

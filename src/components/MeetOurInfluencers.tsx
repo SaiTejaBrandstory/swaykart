@@ -9,6 +9,7 @@ interface Influencer {
   categories_combined: string;
   engagement_rate: number;
   credibility_score: number;
+  location?: string;
 }
 
 const MeetOurInfluencers = () => {

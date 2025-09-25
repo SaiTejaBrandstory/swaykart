@@ -86,7 +86,7 @@ const AboutUs = () => {
                 fontSize: 'clamp(16px, 2vw, 18px)',
                 lineHeight: 'clamp(24px, 3vw, 28px)'
               }}>
-                Having witnessed a friend's struggle to promote her brand due to unreliable influencers and the high costs of marketing agencies, Akshay and Nidhi were inspired to create a tech-driven solution. Leveraging AI and data, Swaykart bridges the gap between brands and influencers by providing a platform that ensures trust, transparency, and effective campaign management.
+                Having witnessed a friend&apos;s struggle to promote her brand due to unreliable influencers and the high costs of marketing agencies, Akshay and Nidhi were inspired to create a tech-driven solution. Leveraging AI and data, Swaykart bridges the gap between brands and influencers by providing a platform that ensures trust, transparency, and effective campaign management.
               </p>
             </div>
           </div>
@@ -112,7 +112,7 @@ const AboutUs = () => {
                 fontSize: 'clamp(16px, 2vw, 18px)',
                 lineHeight: 'clamp(24px, 3vw, 28px)'
               }}>
-                Our mission extends beyond efficiency; we're driven by a desire to create a fair and transparent marketplace for both brands and micro-influencers. With innovations like AI engines, data analytics, and LLM models, Swaykart offers equal opportunities for MSMEs and ensures fair compensation for micro-influencers.
+                Our mission extends beyond efficiency; we&apos;re driven by a desire to create a fair and transparent marketplace for both brands and micro-influencers. With innovations like AI engines, data analytics, and LLM models, Swaykart offers equal opportunities for MSMEs and ensures fair compensation for micro-influencers.
               </p>
             </div>
           </div>
@@ -138,7 +138,7 @@ const AboutUs = () => {
                 fontSize: 'clamp(16px, 2vw, 18px)',
                 lineHeight: 'clamp(24px, 3vw, 28px)'
               }}>
-                In a competitive market, Swaykart's ability to pivot and innovate keeps us at the forefront, driven by a commitment to combat exploitation and streamline the industry. Our goal is to empower brands and influencers alike. "Swaykart" embodies our vision—"Sway" represents influence, while "Kart" reflects fast-moving opportunities—symbolizing our dedication to driving growth and creating a more transparent, trustworthy space for influencer marketing. Our platform makes it simpler for brands to connect with the right influencers and for influencers to thrive.
+                In a competitive market, Swaykart&apos;s ability to pivot and innovate keeps us at the forefront, driven by a commitment to combat exploitation and streamline the industry. Our goal is to empower brands and influencers alike. &ldquo;Swaykart&rdquo; embodies our vision—&ldquo;Sway&rdquo; represents influence, while &ldquo;Kart&rdquo; reflects fast-moving opportunities—symbolizing our dedication to driving growth and creating a more transparent, trustworthy space for influencer marketing. Our platform makes it simpler for brands to connect with the right influencers and for influencers to thrive.
               </p>
             </div>
           </div>
