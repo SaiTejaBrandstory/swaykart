@@ -13,10 +13,11 @@ interface DatabaseTableProps {
   loading?: boolean;
   selectedCategory?: string;
   selectedLocation?: string;
+  selectedFollowersTier?: string;
   sortBy?: string;
 }
 
-const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData = [], loading = false, selectedCategory = 'All Categories', selectedLocation = 'All Locations', sortBy = 'Ranking' }) => {
+const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData = [], loading = false, selectedCategory = 'All Categories', selectedLocation = 'All Locations', selectedFollowersTier = 'All Tiers', sortBy = 'Ranking' }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   
@@ -34,9 +35,18 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
   
   const itemsPerPage = 10;
 
-  // Filter and sort data based on search query, selected category, selected location, and sort option
+  // Helper function to get followers tier
+  const getFollowersTier = (followersCount: number): string => {
+    if (followersCount >= 1000000) return 'Mega (1M+)';
+    if (followersCount >= 100000) return 'Macro (100K - 1M)';
+    if (followersCount >= 10000) return 'Micro (10K - 100K)';
+    if (followersCount >= 1000) return 'Nano (1K - 10K)';
+    return 'Under 1K';
+  };
+
+  // Filter and sort data based on search query, selected category, selected location, followers tier, and sort option
   const filteredData = useMemo(() => {
-    console.log('🔍 DatabaseTable - allData length:', allData.length, 'selectedCategory:', selectedCategory, 'selectedLocation:', selectedLocation, 'searchQuery:', searchQuery);
+    console.log('🔍 DatabaseTable - allData length:', allData.length, 'selectedCategory:', selectedCategory, 'selectedLocation:', selectedLocation, 'selectedFollowersTier:', selectedFollowersTier, 'searchQuery:', searchQuery);
     let filtered = allData;
     
     // Filter by category first
@@ -53,6 +63,16 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
       filtered = filtered.filter(row => {
         if (!row.location) return false;
         return row.location.trim() === selectedLocation;
+      });
+    }
+    
+    // Filter by followers tier
+    if (selectedFollowersTier && selectedFollowersTier !== 'All Tiers') {
+      filtered = filtered.filter(row => {
+        if (!row.followers_count) return false;
+        const followersCount = parseInt(row.followers_count) || 0;
+        const tier = getFollowersTier(followersCount);
+        return tier === selectedFollowersTier;
       });
     }
     
@@ -86,7 +106,7 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
     }
     
     return filtered;
-  }, [allData, searchQuery, selectedCategory, selectedLocation, sortBy]);
+  }, [allData, searchQuery, selectedCategory, selectedLocation, selectedFollowersTier, sortBy]);
 
   // Paginate filtered data
   const paginatedData = useMemo(() => {
@@ -116,10 +136,10 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
     };
   }, [filteredData.length, currentPage, itemsPerPage]);
 
-  // Reset to first page when search, category, location, or sort changes
+  // Reset to first page when search, category, location, followers tier, or sort changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory, selectedLocation, sortBy]);
+  }, [searchQuery, selectedCategory, selectedLocation, selectedFollowersTier, sortBy]);
 
   if (loading) {
     return (
@@ -404,6 +424,11 @@ const DatabaseTable: React.FC<DatabaseTableProps> = ({ searchQuery = '', allData
           color: '#14213D',
         }}>
           Search result by : {sortBy}
+          {selectedFollowersTier !== 'All Tiers' && (
+            <span style={{ fontSize: 'clamp(14px, 2.5vw, 16px)', fontWeight: 400, color: '#6B7280', marginLeft: '8px' }}>
+              • {selectedFollowersTier}
+            </span>
+          )}
         </h2>
         {pagination && (
           <div style={{

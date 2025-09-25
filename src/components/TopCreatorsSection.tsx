@@ -9,6 +9,7 @@ const TopCreatorsSection = () => {
   const [selectedIndustry, setSelectedIndustry] = useState('All Categories')
   const [selectedLocation, setSelectedLocation] = useState('All Locations')
   const [selectedPlatform, setSelectedPlatform] = useState('Instagram')
+  const [selectedFollowersTier, setSelectedFollowersTier] = useState('All Tiers')
   const [sortBy, setSortBy] = useState('Ranking')
   const [totalCreators, setTotalCreators] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -482,7 +483,7 @@ const forceRefreshData = async () => {
                   </p>
                 </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
               {/* Industry Dropdown */}
               <div className="relative">
                 <select
@@ -560,6 +561,33 @@ const forceRefreshData = async () => {
                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                   </svg>
               </div>
+              </div>
+
+              {/* Followers Tier Dropdown */}
+              <div className="relative">
+                <select
+                  value={selectedFollowersTier}
+                  onChange={(e) => setSelectedFollowersTier(e.target.value)}
+                  className="block w-full px-3 sm:px-4 py-2 pr-8 text-sm text-[#14213D] bg-white border border-[#E5E7EB] rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FCA311] focus:border-[#FCA311] appearance-none"
+                  style={{
+                    fontFamily: 'Inter',
+                    fontWeight: 400,
+                    fontSize: 'clamp(14px, 2vw, 16px)',
+                    lineHeight: 'clamp(16px, 3vw, 20px)',
+                    letterSpacing: '0%',
+                  }}
+                >
+                  <option value="All Tiers">All Tiers</option>
+                  <option value="Nano (1K - 10K)">Nano (1K - 10K)</option>
+                  <option value="Micro (10K - 100K)">Micro (10K - 100K)</option>
+                  <option value="Macro (100K - 1M)">Macro (100K - 1M)</option>
+                  <option value="Mega (1M+)">Mega (1M+)</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
               </div>
 
               {/* Sort By */}
@@ -650,6 +678,7 @@ const forceRefreshData = async () => {
             loading={loading}
             selectedCategory={selectedIndustry}
             selectedLocation={selectedLocation}
+            selectedFollowersTier={selectedFollowersTier}
             sortBy={sortBy}
           />
         ) : (
