@@ -17,12 +17,16 @@ export default function StaticPageWrapper({ htmlContent, username }: StaticPageW
     const parser = new DOMParser()
     const doc = parser.parseFromString(htmlContent, 'text/html')
     
-    const profileImages = doc.querySelectorAll('img.profile-img')
-    profileImages.forEach(img => {
-      const originalSrc = img.getAttribute('src')
-      if (originalSrc && originalSrc.includes('cdninstagram.com')) {
-        const encodedUrl = encodeURIComponent(originalSrc)
-        img.setAttribute('src', `/api/image-proxy?url=${encodedUrl}`)
+    // Preload profile images to prevent delay
+    const imgElements = doc.querySelectorAll('img.profile-img')
+    imgElements.forEach(img => {
+      const src = img.getAttribute('src')
+      if (src) {
+        const preloadImg = new Image()
+        preloadImg.src = src
+        // Add loading transition styles
+        img.setAttribute('style', 'opacity: 0; transition: opacity 0.3s ease-in-out;')
+        img.setAttribute('onload', 'this.style.opacity = 1;')
       }
     })
     
