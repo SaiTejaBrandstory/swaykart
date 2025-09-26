@@ -161,8 +161,12 @@ const AboutUs = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-                  <div className="w-24 h-24 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-white font-bold text-2xl">NN</span>
+                  <div className="w-32 h-32 mx-auto mb-6 overflow-hidden rounded-full shadow-lg">
+                    <img 
+                      src="/images/about-us/nidhi-nanda.webp" 
+                      alt="Nidhi Nanda - Co-Founder & CEO" 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2" style={{
                     fontFamily: 'Inter',
@@ -181,8 +185,12 @@ const AboutUs = () => {
                 </div>
 
                 <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-                  <div className="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-white font-bold text-2xl">AA</span>
+                  <div className="w-32 h-32 mx-auto mb-6 overflow-hidden rounded-full shadow-lg">
+                    <img 
+                      src="/images/about-us/akshay-anand.webp" 
+                      alt="Akshay Anand - Co-Founder & CTO" 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2" style={{
                     fontFamily: 'Inter',

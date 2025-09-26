@@ -34,7 +34,7 @@ const FAQSection = () => {
     {
       id: 6,
       question: "How do I get started with Swaykart?",
-      answer: "Getting started is simple! Sign up for a free account, complete your brand profile, set your campaign goals and budget, and our AI will start matching you with relevant influencers. You can launch your first campaign within minutes of signing up."
+      answer: "To get started with Swaykart, please click on 'Contact Us' and our team will reach out to you, or you can write an email to support@swaykart.com. We'll help you set up your account and guide you through the process."
     }
   ]
 
